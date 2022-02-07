@@ -1,0 +1,40 @@
+{
+  "name": "sensor_postgres_batch_insert",
+  "version": "1.0.0",
+  "description": "",
+  
+  "main": "./dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/juniper-garden/juniper-tech-os-handlers.git"
+  },
+  "author": {
+    "name": "Daniel Ashcraft <daniel.ashcraft@ofashandfire.com>"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "yarn build-ts && yarn tslint",
+    "watch-test": "yarn test -- --watchAll",
+    "build-ts": "tsc",
+    "watch-ts": "tsc -w",
+    "tslint": "tslint -c tslint.json -p tsconfig.json",
+    "debug": "yarn build && yarn watch-debug",
+    "test": "jest unit --forceExit --verbose",
+    "lint:fix": "yarn tslint --fix"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "yup": "^0.32.11"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.4.0",
+    "jest": "^27.5.0",
+    "ts-jest": "^27.1.3",
+    "ts-node": "^10.4.0",
+    "tslint": "^6.1.3",
+    "tslint-config-airbnb": "^5.11.2",
+    "typescript": "^4.5.5"
+  }
+}
