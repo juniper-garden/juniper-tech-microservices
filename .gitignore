@@ -72,3 +72,6 @@ web-build/
 dist/
 
 # @end expo-cli
+
+# Ignore DevSpace cache and log folder
+.devspace/
