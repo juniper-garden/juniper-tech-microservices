@@ -1,6 +1,5 @@
-
 import { DataTypes, Model } from 'sequelize'
-import sequelize from '../db'
+import sequelize from '../sequelize_connection'
 
 import withDateNoTz from 'sequelize-date-no-tz-postgres'
 

@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config('../../.env')
 import { Sequelize } from 'sequelize'
 
 // In a real app, you should keep the database connection URL as an environment variable.

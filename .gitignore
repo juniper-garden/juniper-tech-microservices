@@ -75,3 +75,6 @@ dist/
 
 # Ignore DevSpace cache and log folder
 .devspace/
+
+# ignore env file
+.env

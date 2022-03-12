@@ -12,6 +12,27 @@ Each handler needs to accept these env variables:
 - kafka url
 
 
+## Getting Started
+We use docker to start development infrastructure, it is required to have running before
+you can begin developing the server side portion of the application. This is a nodejs
+ingestion server that interfaces with a separate database, this server doesn't handle
+sensor onboarding, only ingestion of data at the moment. In the future, device onboarding
+and management will be moved either to this repository or a separate repository.
 
-## Dependencies
+## Development
+- Install dependencies with `yarn install`
 - devspace (`yarn global add devspace`)
+- run `docker volume create timeseries-db-volume`
+- run `docker-compose up -d` to make sure services have started
+- run the script at `./packages/db/scripts/setup_db.sh` to setup the database
+- run `lerna link && lerna bootstrap` to symlink cross dependencies
+
+## Kubernetes Local Deployment
+### Technologies
+- TimescaleDb (pg13)
+- Kafka
+- Zookeeper
+- Kafka-ui
+- (Docker) <https://docs.docker.com/get-docker/>
+- kubectl `brew install kubectl`
+- minikube `brew install minikube`

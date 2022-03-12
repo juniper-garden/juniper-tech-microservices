@@ -142,19 +142,16 @@ services:
       CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_REST_ADVERTISED_HOST_NAME: kafka-connect0
       CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
-
-  kafka-init-topics:
-    image: confluentinc/cp-kafka:5.2.4
-    volumes:
-      - ./message.json:/data/message.json
-    depends_on:
-      - kafka0
-    command: "bash -c 'echo Waiting for Kafka to be ready... && \
-               cub kafka-ready -b kafka0:29092 1 30 && \
-               kafka-topics --create --topic second.users --partitions 3 --replication-factor 1 --if-not-exists --zookeeper zookeeper0:2182 && \
-               kafka-topics --create --topic first.messages --partitions 2 --replication-factor 1 --if-not-exists --zookeeper zookeeper0:2182 && \
-               kafka-console-producer --broker-list kafka0:29092 -topic second.users < /data/message.json'"
-
+  cache:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes: 
+      - cache:/data
 volumes:
   timeseries-db-volume:
     external: true
+  cache:
+    driver: local

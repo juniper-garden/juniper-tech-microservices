@@ -5,7 +5,7 @@
   "author": "Daniel <daniel.ashcraft@ofashandfire.com>",
   "homepage": "https://github.com/juniper-garden/juniper-tech-microservices#readme",
   "license": "MIT",
-  "main": "lib/db.ts",
+  "main": "build/lib/index.js",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -20,8 +20,8 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
     "dev": "nodemon",
-    "start": "ts-node lib/db.ts",
-    "start:prod": "ts-node lib/db.ts --transpileOnly",
+    "start": "ts-node tsconfig.json lib/index.ts",
+    "start:prod": "ts-node lib/index.ts --transpileOnly",
     "db:create": "npx sequelize-cli db:create",
     "db:seed": "npx sequelize-cli db:seed",
     "db:drop": "npx sequelize-cli db:drop",
@@ -31,6 +31,7 @@
     "url": "https://github.com/juniper-garden/juniper-tech-microservices/issues"
   },
   "devDependencies": {
+    "@types/node": "^17.0.21",
     "@types/sequelize": "^4.28.10",
     "nodemon": "^2.0.15",
     "sequelize-cli": "^6.4.1",
@@ -41,6 +42,7 @@
   "dependencies": {
     "@sequelize/core": "^7.0.0-alpha.10",
     "dotenv": "^16.0.0",
+    "pg": "^8.7.3",
     "sequelize": "^6.12.0",
     "sequelize-date-no-tz-postgres": "^1.0.0"
   }
