@@ -14,6 +14,9 @@
     "lib"
   ],
   "devDependencies": {
+    "@types/jest": "^27.0.3",
+    "jest": "^27.5.1",
+    "ts-jest": "^27.1.2"
   },
   "dependencies": {
     "@juniper-tech/core": "^0.0.0",
@@ -32,7 +35,7 @@
     "url": "git+https://github.com/juniper-garden/juniper-tech-microservices.git"
   },
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1",
+    "test": "jest unit --forceExit --verbose",
     "dev": "./node_modules/.bin/nodemon",
     "start": "./node_modules/.bin/ts-node lib/sensor-ingest.ts",
     "start:prod": "node build/lib/sensor-ingest.js"
