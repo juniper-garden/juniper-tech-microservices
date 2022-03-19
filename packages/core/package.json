@@ -1,0 +1,40 @@
+{
+  "name": "@juniper-tech/core",
+  "version": "0.0.0",
+  "description": "Common utilities for Juniper Tech models, events and actions.",
+  "author": "Daniel <daniel.ashcraft@ofashandfire.com>",
+  "homepage": "https://github.com/juniper-garden/juniper-tech-microservices#readme",
+  "license": "MIT",
+  "main": "build/core.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/juniper-garden/juniper-tech-microservices.git"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "kafkajs": "^1.16.0",
+    "pg": "^8.7.3",
+    "sequelize": "^6.12.0",
+    "sequelize-date-no-tz-postgres": "^1.0.0",
+    "ts-node": "^10.7.0",
+    "tslint": "^6.1.3",
+    "typescript": "^4.6.2",
+    "winston": "^3.6.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "build": "tsc -p tsconfig.json",
+    "start": "./node_modules/.bin/ts-node lib/core.ts",
+    "start:prod": "node build/lib/core.js"
+  },
+  "bugs": {
+    "url": "https://github.com/juniper-garden/juniper-tech-microservices/issues"
+  }
+}

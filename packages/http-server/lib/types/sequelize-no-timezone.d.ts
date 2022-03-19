@@ -1,1 +1,0 @@
-declare module 'sequelize-date-no-tz-postgres';
