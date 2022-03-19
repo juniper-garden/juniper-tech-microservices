@@ -1,6 +1,6 @@
 {
   "name": "@juniper-tech/core",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "Common utilities for Juniper Tech models, events and actions.",
   "author": "Daniel <daniel.ashcraft@ofashandfire.com>",
   "homepage": "https://github.com/juniper-garden/juniper-tech-microservices#readme",
@@ -13,6 +13,7 @@
     "test": "__tests__"
   },
   "files": [
+    "build",
     "lib"
   ],
   "repository": {
