@@ -1,6 +1,6 @@
 {
   "name": "@juniper-tech/core",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Common utilities for Juniper Tech models, events and actions.",
   "author": "Daniel <daniel.ashcraft@ofashandfire.com>",
   "homepage": "https://github.com/juniper-garden/juniper-tech-microservices#readme",
@@ -8,6 +8,7 @@
   "main": "build/core.js",
   "types": "build/core.d.ts",
   "directories": {
+    "build": "build",
     "lib": "lib",
     "test": "__tests__"
   },
