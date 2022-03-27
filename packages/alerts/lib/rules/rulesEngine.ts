@@ -1,9 +1,11 @@
 import { Engine } from 'json-rules-engine'
 
-export default function runRules() {
+let fakeRedis = (deviceId: string) => {}
+export default function runRules(deviceId: string) {
   // fetch rules from redis
+  const rules = fakeRedis(deviceId)
   // fetch data rules run against in redis
-   
+  const data = fakeRedis(deviceId)
   /**
    * Setup a new engine
    */
