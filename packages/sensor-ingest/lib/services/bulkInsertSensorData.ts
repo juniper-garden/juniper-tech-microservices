@@ -12,5 +12,5 @@ export async function bulkInsertSensorData(data: SensorReading[]): Promise<any> 
       console.error('error', err)
     })
   }
-  return Promise.resolve()
+  return Promise.resolve(data)
 }
