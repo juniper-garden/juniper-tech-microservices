@@ -1,6 +1,6 @@
 {
   "name": "sensor-ingest",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "> TODO: description",
   "author": "Daniel <daniel.ashcraft@ofashandfire.com>",
   "homepage": "https://github.com/juniper-garden/juniper-tech-microservices#readme",
@@ -19,7 +19,7 @@
     "ts-jest": "^27.1.2"
   },
   "dependencies": {
-    "@juniper-tech/core": "^0.0.7",
+    "@juniper-tech/core": "^0.0.8",
     "dotenv": "^16.0.0",
     "kafkajs": "^1.16.0",
     "nodemon": "^2.0.15",

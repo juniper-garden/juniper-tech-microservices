@@ -3,7 +3,6 @@
     "files": true
   },
   "exclude": [
-    "__tests__",
     "build",
     "node_modules"
   ],
@@ -21,6 +20,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
   }
 }

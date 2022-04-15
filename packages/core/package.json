@@ -1,12 +1,12 @@
 {
   "name": "@juniper-tech/core",
-  "version": "0.0.6",
+  "version": "0.0.8",
   "description": "Common utilities for Juniper Tech models, events and actions.",
   "author": "Daniel <daniel.ashcraft@ofashandfire.com>",
   "homepage": "https://github.com/juniper-garden/juniper-tech-microservices#readme",
   "license": "MIT",
-  "main": "build/core.js",
-  "types": "build/core.d.ts",
+  "main": "build/lib/core.js",
+  "types": "build/lib/core.d.ts",
   "directories": {
     "build": "build",
     "lib": "lib",
@@ -24,6 +24,8 @@
     "dotenv": "^16.0.0",
     "kafkajs": "^1.16.0",
     "pg": "^8.7.3",
+    "redis": "^4.0.6",
+    "redisk": "^2.1.7",
     "sequelize": "^6.12.0",
     "sequelize-date-no-tz-postgres": "^1.0.0",
     "ts-node": "^10.7.0",
@@ -32,12 +34,19 @@
     "winston": "^3.6.0"
   },
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1",
+    "test": "jest",
     "build": "tsc -p tsconfig.json",
     "start": "./node_modules/.bin/ts-node lib/core.ts",
     "start:prod": "node build/lib/core.js"
   },
   "bugs": {
     "url": "https://github.com/juniper-garden/juniper-tech-microservices/issues"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^6.1.2",
+    "@types/jest": "^27.4.1",
+    "@types/redis": "^4.0.11",
+    "jest": "^27.5.1",
+    "ts-jest": "^27.1.4"
   }
 }
