@@ -35,7 +35,7 @@
     "url": "git+https://github.com/juniper-garden/juniper-tech-microservices.git"
   },
   "scripts": {
-    "test": "jest unit --forceExit --verbose",
+    "test": "jest --verbose",
     "dev": "./node_modules/.bin/nodemon",
     "start": "./node_modules/.bin/ts-node lib/sensor-ingest.ts",
     "start:prod": "node build/lib/sensor-ingest.js"

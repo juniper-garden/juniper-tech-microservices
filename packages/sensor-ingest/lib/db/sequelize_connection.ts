@@ -20,4 +20,10 @@ const DB = new Sequelize(databaseUrl, {
   protocol: 'postgres'
 })
 
+async function verifyConnection(){
+  await DB.authenticate()
+}
+
+verifyConnection()
+
 export default DB
