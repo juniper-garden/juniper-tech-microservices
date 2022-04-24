@@ -1,76 +1,33 @@
 import { Engine } from 'json-rules-engine'
+import { HydratedSensorBufferPayload } from '../customTypes'
 
-let fakeRedis = (deviceId: string) => {}
-export default function runRules(deviceId: string) {
-  // fetch rules from redis
-  const rules = fakeRedis(deviceId)
-  // fetch data rules run against in redis
-  const data = fakeRedis(deviceId)
+export default async function runRules(data: HydratedSensorBufferPayload) {
   /**
    * Setup a new engine
    */
   let engine = new Engine()
-  
-  /**
-   * Rule for identifying microsoft employees taking pto on christmas
-   *
-   * the account-information fact returns:
-   *  { company: 'XYZ', status: 'ABC', ptoDaysTaken: ['YYYY-MM-DD', 'YYYY-MM-DD'] }
-   */
-  let microsoftRule = {
-    conditions: {
-      all: [{
-        fact: 'account-information',
-        operator: 'equal',
-        value: 'microsoft',
-        path: '$.company' // access the 'company' property of "account-information"
-      }, {
-        fact: 'account-information',
-        operator: 'in',
-        value: ['active', 'paid-leave'], // 'status' can be active or paid-leave
-        path: '$.status' // access the 'status' property of "account-information"
-      }, {
-        fact: 'account-information',
-        operator: 'contains', // the 'ptoDaysTaken' property (an array) must contain '2016-12-25'
-        value: '2016-12-25',
-        path: '$.ptoDaysTaken' // access the 'ptoDaysTaken' property of "account-information"
-      }]
-    },
-    event: {
-      type: 'microsoft-christmas-pto',
-      params: {
-        message: 'current microsoft employee taking christmas day off'
-      }
-    }
+  let deviceRule = {
+    ...data.alert_config
   }
-  engine.addRule(microsoftRule)
-  
-  /**
-   * 'account-information' fact executes an api call and retrieves account data, feeding the results
-   * into the engine.  The major advantage of this technique is that although there are THREE conditions
-   * requiring this data, only ONE api call is made.  This results in much more efficient runtime performance
-   * and fewer network requests.
-   */
-  engine.addFact('account-information', function (params, almanac) {
-    console.log('loading account information...')
-    return almanac.factValue('accountId')
-      .then((accountId) => {
-        return accountId
-      })
-  })
-  
+  engine.addRule(deviceRule)
+
   // define fact(s) known at runtime
-  let facts = { accountId: 'lincoln' }
-  engine
-    .run(facts)
-    .then(({ events }: any) => {
-      console.log(facts.accountId + ' is a ' + events.map((event: any) => event.params.message))
-    })
-  
-  /*
-   * OUTPUT:
-   *
-   * loading account information... // <-- API call is made ONCE and results recycled for all 3 conditions
-   * lincoln is a current microsoft employee taking christmas day off
-   */
+  const facts = buildFactFromReadings(data.device_buffer.sensor_readings)
+
+  const ruleResults = await engine.run(facts)
+  if (!ruleResults.events.length) return { events: [], facts }
+
+  return { events: ruleResults.events, results: ruleResults.results, facts, customer_device_id: data.customer_device_id }
+}
+
+function buildFactFromReadings(obj: any) {
+  let parsed = JSON.parse(obj)
+  let fact: any = {}
+  Object.keys(parsed).forEach((key: string) => {
+    let sum = parsed[key].reduce((acc: number, curr: any) => {
+      return acc + curr.value
+    }, 0)
+    fact[key] = sum / parsed[key].length
+  })
+  return fact
 }

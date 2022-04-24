@@ -2,10 +2,29 @@ require('dotenv').config('../.env')
 import { EachBatchPayload } from 'kafkajs'
 import JuniperCore from '@juniper-tech/core'
 import ingestPipe from './services/ingestPipe';
+const { JuniperRedisUtils } = JuniperCore
+const { JuniperRedisBuffer } = JuniperRedisUtils
 
 const { JuniperKafka, JuniperConsumer } = JuniperCore
 
 const kafka = JuniperKafka(process.env.KAFKA_BROKERS || '', 'juniper-ingest-client', 2)
+
+async function setupRedis() {
+  const redisObjects:any = await JuniperRedisBuffer('redis://localhost:6379')
+  global.redisk = redisObjects.redisk
+  global.redis = redisObjects.redis
+}
+
+setupRedis()
+
+
+
+process.once('SIGTERM', async function (code) {
+  console.log('SIGTERM received...');
+  await global.redisk.close()
+  await global.redis.quit()
+});
+
 
 async function sensorIngest() {
   const consumer = await JuniperConsumer(kafka, 'nodejs-dev', null)

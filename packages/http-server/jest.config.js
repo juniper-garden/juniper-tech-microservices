@@ -6,6 +6,7 @@ module.exports = {
 		redisk: null,
 		redis: null
 	},
+	testTimeout: 10000,
 	moduleFileExtensions: [
 		'ts',
 		'js'

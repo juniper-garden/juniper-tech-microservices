@@ -19,7 +19,7 @@ describe('Data sanitization utils, unit tests', () => {
     })
     const outliersIncluded = [...fakeData, { value: '1000.00' }, { value: '100001.00' }, { value: '0' }, { value: '-100' }, { value: '-1' }]
     const results = cleanSensorReadingsAndRemoveOutliers(outliersIncluded)
-    expect(typeof results).toBe('number')
+    expect(typeof results[0]).toBe('number')
   })
 
   it('should group all readings by customer device id', () => {

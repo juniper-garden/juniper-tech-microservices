@@ -10,6 +10,17 @@ export type Alert = {
   json_rule: string;
 }
 
+export type HydratedSensorBufferPayload = {
+  customer_device_id: string,
+  device_buffer: {
+    bufferSize: string,
+    customer_device_id: string,
+    name: string,
+    sensor_readings: string,
+  },
+  alert_config: any
+}
+
 export type AlertRuleType = 'sms' | 'email' | 'desktopPushNofication' | 'mobilePushNotification';
 
 // Alert type is meant to differentiate priority of alerts
@@ -23,4 +34,9 @@ enum AlertStatus {
   0 = 'active',
   1 = 'archived',
   2 = 'removed'
+}
+
+declare global {
+  var redis: any;
+  var redisk: any;
 }

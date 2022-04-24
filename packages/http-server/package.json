@@ -18,7 +18,7 @@
     "url": "git+https://github.com/juniper-garden/juniper-tech-microservices.git"
   },
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1",
+    "test": "cross-env NODE_ENV=test jest --verbose",
     "start": "./node_modules/.bin/ts-node lib/http-server.ts",
     "start:prod": "node build/lib/http-server.js"
   },
@@ -38,6 +38,12 @@
     "@types/body-parser": "^1.19.2",
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
-    "@types/node": "^17.0.24"
+    "@types/jest": "^27.4.1",
+    "@types/node": "^17.0.24",
+    "@types/supertest": "^2.0.12",
+    "cross-env": "^7.0.3",
+    "jest": "^27.5.1",
+    "supertest": "^6.2.2",
+    "ts-jest": "^27.1.4"
   }
 }

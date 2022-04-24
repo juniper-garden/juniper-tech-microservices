@@ -1,5 +1,4 @@
 import {
-  cleanSensorReadingsAndRemoveOutliers,
   createHashOfDevicesByCustomerDeviceId,
   createHashOfReadingsBySensorName
 } from '../utils/data-sanitization'
@@ -19,7 +18,8 @@ export type ReadingsByCustomerId = {
   }
 }
 
-export async function processKafkaQueueController(data: any):  Promise<{ readingsMapped: ReadingsByCustomerId }> {
+// TODO: Refactor
+export function processKafkaQueueController(data: any): { readingsMapped: ReadingsByCustomerId, finalBatchResults: SensorReading[] } {
   const processed: any = data.map(kinesisTransformer).flat()
   const readingsMapped: ReadingsByCustomerId = createHashOfDevicesByCustomerDeviceId(processed)
 
@@ -31,7 +31,7 @@ export async function processKafkaQueueController(data: any):  Promise<{ reading
     for (const sensorName in readingsMapped[key]) {
       const sensorReadings: SensorReading[] = readingsMapped[key][sensorName]
 
-      sensorReadings.forEach((reding:any) => {
+      sensorReadings.forEach((reding: any) => {
         finalBatchResults.push({
           customer_device_id: key,
           name: sensorName,
@@ -43,7 +43,7 @@ export async function processKafkaQueueController(data: any):  Promise<{ reading
     }
   }
 
-  return { readingsMapped }
+  return { readingsMapped, finalBatchResults }
 }
 
 function parseFloat0(str: string) {

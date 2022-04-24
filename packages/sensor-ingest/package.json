@@ -35,6 +35,7 @@
     "url": "git+https://github.com/juniper-garden/juniper-tech-microservices.git"
   },
   "scripts": {
+    "build": "tsc -p tsconfig.json",
     "test": "jest --verbose",
     "dev": "./node_modules/.bin/nodemon",
     "start": "./node_modules/.bin/ts-node lib/sensor-ingest.ts",

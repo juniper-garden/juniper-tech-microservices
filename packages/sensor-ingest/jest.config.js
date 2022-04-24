@@ -2,7 +2,9 @@ module.exports = {
 	globals: {
 		'ts-jest': {
 			tsConfigFile: 'tsconfig.json'
-		}
+		},
+		redisk: null,
+		redis: null
 	},
 	moduleFileExtensions: [
 		'ts',
@@ -12,7 +14,8 @@ module.exports = {
 		'^.+\\.(ts|tsx)$': './node_modules/ts-jest/preprocessor.js'
 	},
 	testMatch: [
-		'./**/**/**.test.(ts|js)'
+		'./**/**/**.test.(ts)'
 	],
-	testEnvironment: 'node'
+	testEnvironment: 'node',
+	setupFilesAfterEnv: ["<rootDir>/__tests__/setup.ts"]
 }
