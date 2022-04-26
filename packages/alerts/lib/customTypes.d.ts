@@ -21,6 +21,23 @@ export type HydratedSensorBufferPayload = {
   alert_config: any
 }
 
+export interface JobInterface {
+  [key: string]: any
+  data: TypicalAlertEngineResult
+}
+
+export interface TypicalAlertEngineResult {
+  customer_device_id: string;
+  events: any[];
+  results: any;
+  facts: any;
+}
+
+export interface JobHandlerParams {
+  job: JobInterface,
+  done: () => void
+}
+
 export type AlertRuleType = 'sms' | 'email' | 'desktopPushNofication' | 'mobilePushNotification';
 
 // Alert type is meant to differentiate priority of alerts

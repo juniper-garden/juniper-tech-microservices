@@ -27,6 +27,7 @@ function buildFactFromReadings(obj: any) {
     let sum = parsed[key].reduce((acc: number, curr: any) => {
       return acc + curr.value
     }, 0)
+    // we use the average of the values
     fact[key] = sum / parsed[key].length
   })
   return fact

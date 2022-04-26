@@ -39,16 +39,21 @@ export class SensorBuffer {
   @Property()
   public sensor_readings: string;
 
+  @Property()
+  public latest_events: string;
+
   constructor(
       customer_device_id: string,
       name: string,
       sensor_readings: string,
-      bufferSize: number = 10
+      bufferSize: number = 10,
+      latest_events: string = '{}'
     ) {
       this.customer_device_id = customer_device_id;
       this.name = name;
       this.sensor_readings = sensor_readings;
       this.bufferSize = bufferSize;
+      this.latest_events = latest_events;
   }
 }
 
