@@ -1,5 +1,4 @@
 import {
-  cleanSensorReadingsAndRemoveOutliers,
   createHashOfDevicesByCustomerDeviceId,
   createHashOfReadingsBySensorName
 } from '../utils/data-sanitization'
@@ -7,19 +6,32 @@ import { kinesisTransformer } from '../utils/helpers'
 import _ from 'lodash/fp'
 import moment from 'moment'
 
-export async function processKafkaQueueController(data: any) {
-  const processed: any = data.map(kinesisTransformer).flat()
-  const readingsMapped = createHashOfDevicesByCustomerDeviceId(processed)
+export type SensorReading = {
+  [key: string]: any;
+  customer_device_id: string;
+  timestamp: any;
+}
 
-  const finalBatchResults: any[] = []
+export type ReadingsByCustomerId = {
+  [key: string]: {
+    [key: string]: SensorReading[];
+  }
+}
+
+// TODO: Refactor
+export function processKafkaQueueController(data: any): { readingsMapped: ReadingsByCustomerId, finalBatchResults: SensorReading[] } {
+  const processed: any = data.map(kinesisTransformer).flat()
+  const readingsMapped: ReadingsByCustomerId = createHashOfDevicesByCustomerDeviceId(processed)
+
+  const finalBatchResults: SensorReading[] = []
 
   for (const key in readingsMapped) {
     readingsMapped[key] = createHashOfReadingsBySensorName(readingsMapped[key])
 
     for (const sensorName in readingsMapped[key]) {
-      const sensorReadings = readingsMapped[key][sensorName]
+      const sensorReadings: SensorReading[] = readingsMapped[key][sensorName]
 
-      sensorReadings.forEach((reding:any) => {
+      sensorReadings.forEach((reding: any) => {
         finalBatchResults.push({
           customer_device_id: key,
           name: sensorName,
@@ -31,7 +43,7 @@ export async function processKafkaQueueController(data: any) {
     }
   }
 
-  return finalBatchResults
+  return { readingsMapped, finalBatchResults }
 }
 
 function parseFloat0(str: string) {

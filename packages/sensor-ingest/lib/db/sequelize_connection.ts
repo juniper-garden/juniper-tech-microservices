@@ -1,4 +1,3 @@
-require('dotenv').config('../../.env')
 import { Sequelize } from 'sequelize'
 
 // In a real app, you should keep the database connection URL as an environment variable.
@@ -14,10 +13,19 @@ const sslConfig:any = process.env.NODE_ENV === 'production' && {
   }
 }
 
-const DB = new Sequelize(databaseUrl, {
-  ...sslConfig,
-  dialect: 'postgres',
-  protocol: 'postgres'
-})
+let DB:any;
+
+async function verifyConnection(db: any){
+  await db.authenticate()
+}
+
+if (process.env.USE_DB) {
+  DB = new Sequelize(databaseUrl, {
+    ...sslConfig,
+    dialect: 'postgres',
+    protocol: 'postgres'
+  })
+  verifyConnection(DB)
+}
 
 export default DB

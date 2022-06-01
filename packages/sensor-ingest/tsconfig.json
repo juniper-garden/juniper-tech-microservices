@@ -2,12 +2,16 @@
   "ts-node": {
     "files": true
   },
+  "exclude": [
+    "build",
+    "node_modules"
+  ],
   "compilerOptions": {
     "target": "es2016",
     "module": "commonjs",
     "baseUrl": "./",
     "paths": {
-      "*": ["node_modules/*", "lib/types/*"]
+      "*": ["node_modules/*", "lib/types/*"],
     },
     "allowJs": true,
     "declaration": true,
@@ -16,6 +20,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
   }
 }
