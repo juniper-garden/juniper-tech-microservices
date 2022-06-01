@@ -8,7 +8,7 @@ const { JuniperRedisBuffer } = JuniperRedisUtils
 const { JuniperKafka, JuniperConsumer } = JuniperCore
 
 const kafka = JuniperKafka(process.env.KAFKA_BROKERS || '', 'juniper-ingest-client', 2)
-const redisUrl = process.env.REDIS_URI || 'redis://127.0.0.1:6379'
+const redisUrl = 'rediss://default:BqZJCqUQXv7dbDqf@db-redis-sfo2-73794-do-user-10532316-0.b.db.ondigitalocean.com:25061'
 
 async function setupRedis() {
   const redisObjects:any = await JuniperRedisBuffer(redisUrl)
@@ -17,8 +17,6 @@ async function setupRedis() {
 }
 
 setupRedis()
-
-
 
 process.once('SIGTERM', async function (code) {
   console.log('SIGTERM received...');
