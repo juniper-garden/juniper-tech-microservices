@@ -11,7 +11,17 @@ type SensorReading = {
 
 
 export async function JuniperRedisBuffer(redis_url: string) {
-  const client = createClient({ url: redis_url });
+  let options = {}
+  if(redis_url.includes('rediss')) {
+    options = {
+      socket: {
+        tls: true,
+        rejectUnauthorized: false,
+        cert: '...'
+      }
+    }
+  }
+  const client = createClient({ url: redis_url, ...options });
 
   client.on('error', (err) => console.log('Redis Client Error', err));
 
