@@ -15,11 +15,12 @@
   ],
   "devDependencies": {
     "@types/jest": "^27.0.3",
+    "@types/lodash": "^4.14.182",
     "jest": "^27.5.1",
     "ts-jest": "^27.1.2"
   },
   "dependencies": {
-    "@juniper-tech/core": "^0.0.9",
+    "@juniper-tech/core": "^0.1.4",
     "dotenv": "^16.0.0",
     "kafkajs": "^1.16.0",
     "nodemon": "^2.0.15",

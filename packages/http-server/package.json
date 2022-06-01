@@ -18,6 +18,7 @@
     "url": "git+https://github.com/juniper-garden/juniper-tech-microservices.git"
   },
   "scripts": {
+    "build": "tsc -p tsconfig.json",
     "test": "cross-env NODE_ENV=test jest --verbose",
     "start": "./node_modules/.bin/ts-node lib/http-server.ts",
     "start:prod": "node build/lib/http-server.js"
@@ -26,7 +27,7 @@
     "url": "https://github.com/juniper-garden/juniper-tech-microservices/issues"
   },
   "dependencies": {
-    "@juniper-tech/core": "^0.0.9",
+    "@juniper-tech/core": "^0.1.4",
     "body-parser": "^1.20.0",
     "cors": "^2.8.5",
     "express": "^4.17.3",

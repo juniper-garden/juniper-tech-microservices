@@ -514,10 +514,10 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@juniper-tech/core@^0.0.8":
-  version "0.0.8"
-  resolved "https://registry.npmjs.org/@juniper-tech/core/-/core-0.0.8.tgz"
-  integrity sha512-FisfvXpVuLDR3/YQrTF1sA4t1ma9MWQN7hsD754igx4eOeoZCIyMTubdkzHwEFqSXeZr8DluilwHHo4X7RAdWA==
+"@juniper-tech/core@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@juniper-tech/core/-/core-0.1.4.tgz#53b93180b67c075425ab552b6b28546e20f6fabf"
+  integrity sha512-rUC9MYQ/3jj8c6x29B4YpoLlfpxytnKqVhKy91L9HPvsjpJUNhDDVnHYxE+HzG2GBT9sjnWI7oawCWqh4OVqMQ==
   dependencies:
     dotenv "^16.0.0"
     kafkajs "^1.16.0"

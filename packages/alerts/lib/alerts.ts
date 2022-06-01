@@ -1,7 +1,24 @@
 require('dotenv').config('../.env')
 import { EachBatchPayload } from 'kafkajs'
 import JuniperCore from '@juniper-tech/core'
+const express = require('express');
+const { createBullBoard } = require('@bull-board/api');
+const { BullAdapter } = require('@bull-board/api/bullAdapter');
+const { ExpressAdapter } = require('@bull-board/express');
+const serverAdapter = new ExpressAdapter();
+
 import rulesIngest from './rules/rulesIngest'
+import allQueues from './jobs';
+
+const { addQueue, removeQueue, setQueues, replaceQueues } = createBullBoard({
+  queues: [new BullAdapter(allQueues.allNotificationsQ), new BullAdapter(allQueues.outboundEmailQ)],
+  serverAdapter: serverAdapter,
+});
+
+const app = express();
+
+serverAdapter.setBasePath('/admin/queues');
+app.use('/admin/queues', serverAdapter.getRouter());
 
 const { JuniperKafka, JuniperConsumer, JuniperRedisUtils } = JuniperCore
 const { JuniperRedisBuffer } = JuniperRedisUtils
@@ -24,7 +41,7 @@ process.once('SIGTERM', async function (code) {
 
 
 async function alerts() {
-  const consumer = await JuniperConsumer(kafka, 'nodejs-dev', null)
+  const consumer = await JuniperConsumer(kafka, 'alerts-topic-consumer-1', null)
 
   await consumer.subscribe({ topic: 'alerts-topic', fromBeginning: true })
 
@@ -40,7 +57,6 @@ async function alerts() {
         parsedData.push(JSON.parse(message?.value?.toString() || ''))
         resolveOffset(message.offset)
       }
-
       await rulesIngest(parsedData)
       await heartbeat()
     }
@@ -48,7 +64,9 @@ async function alerts() {
     console.error(err)
   })
 }
-
+app.listen(3009, () => {
+  console.log('Listening on port 3009!');
+})
 try {
     alerts()
 } catch (err) {

@@ -96,8 +96,9 @@ export function insertLatestSensorReading(item: SensorBuffer, reading: SensorRea
 }
 
 export async function fetchCustomerDeviceAlertByCustomerId(redisClient:any, customer_device_id: string) {
-  let key =  `alerts_config${customer_device_id}:CustomerDevice`
-  return await redisClient.get(key);
+  let keyPattern =  `alerts_config:alerts_config${customer_device_id}:CustomerDevice*`
+  let keys = await redisClient.keys(keyPattern)
+  return await redisClient.MGET(keys)
 }
 
 const JuniperRedisUtils: any = {

@@ -30,6 +30,8 @@ async function sensorIngest() {
   const consumer = await JuniperConsumer(kafka, 'nodejs-dev', null)
 
   await consumer.subscribe({ topic: 'sensor-ingest', fromBeginning: true })
+  global.producer = kafka.producer()
+  await global.producer.connect()
 
   await consumer.run({
     eachBatchAutoResolve: true,

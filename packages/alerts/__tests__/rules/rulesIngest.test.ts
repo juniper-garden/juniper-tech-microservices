@@ -1,5 +1,7 @@
-
+import JuniperCore from '@juniper-tech/core'
 import rulesIngest from '../../lib/rules/rulesIngest';
+const { JuniperRedisUtils } = JuniperCore
+const { JuniperRedisBuffer } = JuniperRedisUtils
 
 const sendAlertRule:any = {
   conditions: {
@@ -22,7 +24,10 @@ const sendAlertRule:any = {
         type: 'mobilePushNotification'
       },
       {
-        type: 'desktopNotification'
+        type: 'email',
+        data: {
+          email: "daniel.ashcraft@ofashandfire.com"
+        }
       }
     ]
   }
@@ -79,6 +84,17 @@ const idArr = [{
 }]
 
 describe('Tests for rulesIngest function', () => {
+  beforeEach(async() => {
+    const redisObjects:any = await JuniperRedisBuffer('redis://localhost:6379')
+    global.redisk = redisObjects.redisk
+    global.redis = redisObjects.redis
+  })
+
+  afterAll(async () => {
+    await global.redis.FLUSHDB()
+    await global.redisk.close()
+    await global.redis.quit()
+  })
   it('Should fetch data by customerId from id array', async () => {
     const res:any = await rulesIngest(idArr)
     expect(res).toHaveLength(2)

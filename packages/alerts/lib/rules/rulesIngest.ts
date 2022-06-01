@@ -13,7 +13,6 @@ export default async function rulesIngest(data:any){
   let results = await Promise.all(data.map(runRules))
 
   let allTriggeredAlerts: TypicalAlertEngineResult[] = results.filter(record => record.events.length)
-
   // common ingress for all event types into the queue
   if (process.env.USE_QUEUES) {
     queues.allNotificationsQ.add(allTriggeredAlerts, {
