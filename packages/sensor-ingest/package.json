@@ -20,7 +20,7 @@
     "ts-jest": "^27.1.2"
   },
   "dependencies": {
-    "@juniper-tech/core": "^0.1.5",
+    "@juniper-tech/core": "^0.1.6",
     "dotenv": "^16.0.0",
     "kafkajs": "^1.16.0",
     "nodemon": "^2.0.15",

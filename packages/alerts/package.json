@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@bull-board/express": "^3.11.0",
-    "@juniper-tech/core": "^0.1.5",
+    "@juniper-tech/core": "^0.1.6",
     "@sendgrid/mail": "^7.6.2",
     "bull": "^4.8.2",
     "dotenv": "^16.0.0",

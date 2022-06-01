@@ -15,9 +15,7 @@ export async function JuniperRedisBuffer(redis_url: string) {
   if(redis_url.includes('rediss')) {
     options = {
       socket: {
-        tls: true,
-        rejectUnauthorized: false,
-        cert: '...'
+        tls: true
       }
     }
   }
