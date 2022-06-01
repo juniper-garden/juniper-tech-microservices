@@ -26,7 +26,7 @@ export async function JuniperRedisBuffer(redis_url: string) {
   await client.connect();
   
   return {
-    redisk: Redisk.init({ url: redis_url }),
+    redisk: Redisk.init({ url: redis_url , ...options}),
     redis: client
   }
 }
