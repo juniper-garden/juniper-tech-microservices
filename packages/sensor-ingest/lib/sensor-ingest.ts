@@ -8,9 +8,10 @@ const { JuniperRedisBuffer } = JuniperRedisUtils
 const { JuniperKafka, JuniperConsumer } = JuniperCore
 
 const kafka = JuniperKafka(process.env.KAFKA_BROKERS || '', 'juniper-ingest-client', 2)
+const redisUrl = process.env.REDIS_URI || 'redis://127.0.0.1:6379'
 
 async function setupRedis() {
-  const redisObjects:any = await JuniperRedisBuffer('redis://localhost:6379')
+  const redisObjects:any = await JuniperRedisBuffer(redisUrl)
   global.redisk = redisObjects.redisk
   global.redis = redisObjects.redis
 }
