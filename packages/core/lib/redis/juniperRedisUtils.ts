@@ -17,7 +17,7 @@ export async function JuniperRedisBuffer(redis_url: string) {
       socket: {
         tls: true
       }
-    }
+    } 
   }
   const client = createClient({ url: redis_url, ...options });
 
