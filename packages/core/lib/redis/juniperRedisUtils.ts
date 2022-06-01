@@ -14,9 +14,7 @@ export async function JuniperRedisBuffer(redis_url: string) {
   let options = {}
   if(redis_url.includes('rediss')) {
     options = {
-      socket: {
-        tls: true
-      }
+      tls: {}
     } 
   }
   const client = createClient({ url: redis_url, ...options });
