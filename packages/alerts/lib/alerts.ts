@@ -1,7 +1,8 @@
 require('dotenv').config('../.env')
 import { EachBatchPayload } from 'kafkajs'
 import JuniperCore from '@juniper-tech/core'
-const express = require('express');
+import express, { Request, Response } from 'express'
+
 const { createBullBoard } = require('@bull-board/api');
 const { BullAdapter } = require('@bull-board/api/bullAdapter');
 const { ExpressAdapter } = require('@bull-board/express');
@@ -65,12 +66,19 @@ async function alerts() {
     console.error(err)
   })
 }
-app.listen(3009, () => {
-  console.log('Listening on port 3009!');
-})
+
 try {
     alerts()
 } catch (err) {
     console.error(err)
 }
 
+app.get('/', (req: Request, res: Response) => {
+  res.status(200)
+})
+
+const PORT = process.env.PORT || 3000
+
+app.listen(PORT, function () {
+  console.log(`App listening on port ${PORT}!`);
+})

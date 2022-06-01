@@ -2,13 +2,14 @@ require('dotenv').config('../.env')
 import { EachBatchPayload } from 'kafkajs'
 import JuniperCore from '@juniper-tech/core'
 import ingestPipe from './services/ingestPipe';
+import express, { Request, Response } from 'express'
 const { JuniperRedisUtils } = JuniperCore
 const { JuniperRedisBuffer } = JuniperRedisUtils
 
 const { JuniperKafka, JuniperConsumer } = JuniperCore
 
 const kafka = JuniperKafka(process.env.KAFKA_BROKERS || '', 'juniper-ingest-client', 2)
-const redisUrl = 'rediss://default:BqZJCqUQXv7dbDqf@db-redis-sfo2-73794-do-user-10532316-0.b.db.ondigitalocean.com:25061'
+const redisUrl = process.env.REDIS_URI || 'redis://127.0.0.1:6379'
 
 async function setupRedis() {
   const redisObjects:any = await JuniperRedisBuffer(redisUrl)
@@ -58,3 +59,15 @@ try {
 } catch (err) {
   console.error(err)
 }
+
+const app = express();
+
+app.get('/', (req: Request, res: Response) => {
+  res.status(200)
+})
+
+const PORT = process.env.PORT || 3000
+
+app.listen(PORT, function () {
+  console.log(`App listening on port ${PORT}!`);
+})
