@@ -1,27 +1,22 @@
-import { JobInterface } from "../../lib/customTypes";
-import JuniperCore from '@juniper-tech/core';
-import { findLatestEventsForSensor, saveLatestEvent } from '../utils/sensorBufferUtils';
+import { RawAlertRuleInputWithParsedSensorHash } from "../../lib/customTypes";
 import _ from "lodash";
 import { shouldSend, saveAndExit } from '../utils/eventUtils';
-const { JuniperRedisUtils } = JuniperCore
-const { SensorBuffer } = JuniperRedisUtils
 
-export default async function desktopPushNotifiation(job: JobInterface, done:  (params?:any) => void) {
-  const { data }: any = job;
-  let buffer = await global.redisk.getOne(SensorBuffer, `${data.customer_device_id}`);
+export default async function desktopPushNotifiation(job: RawAlertRuleInputWithParsedSensorHash[], done:  (params?:any) => void) {
+  const [data]: any = job;
   // instantiate an empty buffer for sensor name
-  let events = await findLatestEventsForSensor(buffer);
-
-  if(!events) {
+  if(!data.latest_events || data.latest_events.length == 0) {
     const sent:any = await sendNotification(data)
-    if(sent) return saveAndExit(buffer, done)
+    const latest_event = { event: 'desktopPushNotification' }
+    if(sent) return saveAndExit(data, latest_event, done)
     done(new Error('Error sending push notification'))
   }
-
-  if(events && shouldSend(findLatestEventsForSensor(buffer))) {
-    console.log('should send was true', findLatestEventsForSensor(buffer))
+  
+  if(data.latest_events && shouldSend(data.latest_events)) {
+    console.log('should_send')
     const sent:any = await sendNotification(data)
-    if(sent) return saveAndExit(buffer, done)
+    const latest_event = { event: 'desktopPushNotification' }
+    if(sent) return saveAndExit(data, latest_event, done)
     done(new Error('Error sending push notification'))
   }
 }

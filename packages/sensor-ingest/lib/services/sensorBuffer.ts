@@ -1,7 +1,6 @@
 import JuniperCore from '@juniper-tech/core'
+import JGConnection from '../db/jg_connection'
 import { ReadingsByCustomerId, SensorReading } from './kafkaSensorRecordProcessor'
-const { JuniperRedisUtils } = JuniperCore
-const { SensorBuffer,  insertLatestSensorReading, fetchCustomerDeviceAlertByCustomerId} = JuniperRedisUtils
 
 type SensorBufferParam = {
   readingsMapped: ReadingsByCustomerId,
@@ -17,47 +16,35 @@ type SensorBufferParam = {
 export default async function sensorBuffer(data: SensorBufferParam): Promise<any> {
   let unwrappedData = await data
   const { readingsMapped, finalBatchResults } = unwrappedData
-
+  console.log('readingsMapped', readingsMapped, finalBatchResults)
   if(!finalBatchResults?.length) return null
   // keys alerts_config:alerts_config81eaec8b-cc5a-4fe1-811c-d996d4bfe0ad:CustomerDevice
   return new Promise(async (resolve, reject) => {
       Object.keys(readingsMapped).map(async (customerDeviceId: string) => {
         // see if alert exists, if no alert exists for this reading, ignore, don't handle
         // buffer
-        const rawRedisAlertsForDevice = await fetchCustomerDeviceAlertByCustomerId(global.redis, customerDeviceId)
-        const alertConfigString = rawRedisAlertsForDevice.filter((x: any) => !!x)
-        
-        if(!alertConfigString || alertConfigString.length === 0) return resolve({ readingsMapped, finalBatchResults })
-        console.log('alertConfigString', alertConfigString)
-        let alertExists = alertConfigString.map((alertPayload: any) => JSON.parse(alertPayload))
+        const [rows, meta]: any = await JGConnection.query(`
+          SELECT * FROM alerts WHERE alertable_type = 'CustomerDevice' and alertable_id = '${customerDeviceId}' and status = 0
+        `)
+        console.log('rows, meta', rows, meta)
+        if(!rows || rows.length === 0) return resolve({ readingsMapped, finalBatchResults })
+        await sendSensorValuesToAlertsQueue({readingsMapped, customer_device_id: customerDeviceId, alert_configs: rows })
+        resolve({ readingsMapped, finalBatchResults })
+    })
+  })
+}
 
-        Object.keys(readingsMapped[customerDeviceId]).map(async () => {
-          if(!readingsMapped[customerDeviceId]) return
-          
-          const sensorReadings:any = readingsMapped[customerDeviceId] || []
-          let buffer = await global.redisk.getOne(SensorBuffer, `${customerDeviceId}`);
-          
-          // instantiate an empty buffer for sensor name
-          if (!buffer) {
-            await global.redisk.save(new SensorBuffer(customerDeviceId, '', JSON.stringify({})));
-            buffer = await global.redisk.getOne(SensorBuffer, `${customerDeviceId}`);
-          }
-          
-          for(let sensorName in sensorReadings) {
-            sensorReadings[sensorName].map(async (reading: any) => {
-              reading.name = sensorName
-              let newSensorBuffer = insertLatestSensorReading(buffer, reading)
-              await global.redisk.save(newSensorBuffer)
-              await global.producer.send({
-                topic: 'alerts-topic',
-                messages: [
-                    { key: 'data', value: JSON.stringify({ device_buffer: newSensorBuffer, alert_config: alertExists.map((x: any) => x.json_rule) }), partition: 0 }
-                ]
-              })
-              resolve({ newSensorBuffer, readingsMapped, finalBatchResults })
-            })
-          }
-      })
+function sendSensorValuesToAlertsQueue ({readingsMapped, device_id, alerts}: any) {
+  Object.keys(readingsMapped[device_id]).map(async () => {
+    if(!readingsMapped[device_id]) return
+    
+    const sensorReadings:any = readingsMapped[device_id] || []
+
+    await global.producer.send({
+      topic: 'alerts-topic',
+      messages: [
+          { key: 'data', value: JSON.stringify({ readings: sensorReadings, alert_config: alerts.map((x: any) => x.json_rule) }), partition: 0 }
+      ]
     })
   })
 }

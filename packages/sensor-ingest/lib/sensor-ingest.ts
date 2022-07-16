@@ -3,26 +3,12 @@ import { EachBatchPayload } from 'kafkajs'
 import JuniperCore from '@juniper-tech/core'
 import ingestPipe from './services/ingestPipe';
 import express, { Request, Response } from 'express'
-const { JuniperRedisUtils } = JuniperCore
-const { JuniperRedisBuffer } = JuniperRedisUtils
-
 const { JuniperKafka, JuniperConsumer } = JuniperCore
 
 const kafka = JuniperKafka(process.env.KAFKA_BROKERS || '', 'juniper-ingest-client', 2)
-const redisUrl = process.env.REDIS_URI || 'redis://127.0.0.1:6379'
-
-async function setupRedis() {
-  const redisObjects:any = await JuniperRedisBuffer(redisUrl)
-  global.redisk = redisObjects.redisk
-  global.redis = redisObjects.redis
-}
-
-setupRedis()
 
 process.once('SIGTERM', async function (code) {
-  console.log('SIGTERM received...');
-  await global.redisk.close()
-  await global.redis.quit()
+  console.log('SIGTERM received...', code);
 });
 
 
@@ -66,7 +52,7 @@ app.get('/', (req: Request, res: Response) => {
   res.status(200)
 })
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3001
 
 app.listen(PORT, function () {
   console.log(`App listening on port ${PORT}!`);

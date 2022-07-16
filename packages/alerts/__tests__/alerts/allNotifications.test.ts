@@ -1,8 +1,4 @@
-import JuniperCore from '@juniper-tech/core'
 import allNotificationsHandler from '../../lib/alerts/allNotifications';
-const { JuniperRedisUtils } = JuniperCore
-const { SensorBuffer, JuniperRedisBuffer } = JuniperRedisUtils
-
 
 const sendAlertRule:any = {
   conditions: {
@@ -34,6 +30,8 @@ const sendAlertRule:any = {
   }
 }
 
+const alt_input =   {"readings":{"temperature":[{"value":"72.1","unit":"f","timestamp":"1640102575"}]},"alert_config":[{"conditions":{"any":[{"all":[{"fact":"temperature","operator":"greaterThan","value":"50"},{"fact":"temperature","operator":"lessThan","value":"20"}]}]},"event":{"type":"SUCCESS","params":[{"type":"email","data":{"email":"daniel.ashcraft@ofashandfire.com"}}]}},{"conditions":{"any":[{"all":[{"fact":"temperature","operator":"greaterThan","value":"50"},{"fact":"temperature","operator":"lessThan","value":"10"}]}]},"event":{"type":"SUCCESS","params":[{"type":"email","data":{"email":"daniel.ashcraft@ofashandfire.com"}}]}},{"conditions":{"any":[{"all":[{"fact":"temperature","operator":"greaterThan","value":"50"},{"fact":"temperature","operator":"lessThan","value":"10"}]}]},"event":{"type":"SUCCESS","params":[{"type":"email","data":{"email":"daniel.ashcraft@ofashandfire.com"}}]}},{"conditions":{"any":[{"any":[{"fact":"temperature","operator":"greaterThan","value":"50"},{"fact":"temperature","operator":"lessThan","value":"10"}]}]},"event":{"type":"SUCCESS","params":[{"type":"email","data":{"email":"daniel.ashcraft@ofashandfire.com"}}]}}]}
+
 const input = {
   customer_device_id: "81eaec8b-cc5a-4fe1-811c-d996d4bfe0ad",
   device_buffer: {
@@ -52,81 +50,27 @@ const expectedOutput = {
 }
 
 describe("Test the desktop push notification job", () =>{
-  beforeEach(async() => {
-    const redisObjects:any = await JuniperRedisBuffer('redis://localhost:6379')
-    global.redisk = redisObjects.redisk
-    global.redis = redisObjects.redis
-  })
-
-  afterAll(async () => {
-    await global.redis.FLUSHDB()
-    await global.redisk.close()
-    await global.redis.quit()
-  })
-
-  it('Should list nothing on instantiation', async () => {
-    let results = await global.redisk.list(SensorBuffer);
-    expect(results.length).toBe(0);
-  })
-
   it('should send a notification', async () => {
-    let buff  = new SensorBuffer(expectedOutput.customer_device_id, '', expectedOutput.sensor_readings);
-    await global.redisk.save(buff)
-    let result = await global.redisk.getOne(SensorBuffer, expectedOutput.customer_device_id);
-    const job = {
-      data: result
+    const testJob: any = {
+      data: [
+        {
+          customer_device_id: "81eaec8b-cc5a-4fe1-811c-d996d4bfe0ad",
+          events: [
+            {
+              type: 'SUCCESS',
+              params: [
+                {
+                  type: 'email'
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
     const done = jest.fn()
 
-    await allNotificationsHandler(job, done);
+    await allNotificationsHandler(testJob, done);
     expect(done).toBeCalledTimes(1);
-
-    let updated = await global.redisk.getOne(SensorBuffer, expectedOutput.customer_device_id);
-    let latestEvents = JSON.parse(updated.latest_events);
-    expect(latestEvents[0].event).toBe('desktop_push_notification')
   })
-
-  // it('should not send multiple request back to back', async () => {
-  //   let buff  = new SensorBuffer(expectedOutput.customer_device_id, '', expectedOutput.sensor_readings);
-  //   await global.redisk.save(buff)
-  //   let result = await global.redisk.getOne(SensorBuffer, expectedOutput.customer_device_id);
-  //   const job = {
-  //     data: result
-  //   }
-  //   const done = jest.fn()
-
-  //   await desktopPushNotifiation(job, done);
-  //   expect(done).toBeCalledTimes(1);
-
-  //   let updated = await global.redisk.getOne(SensorBuffer, expectedOutput.customer_device_id);
-  //   let latestEvents = JSON.parse(updated.latest_events);
-  //   expect(latestEvents[0].event).toBe('desktop_push_notification')
-
-  //   await desktopPushNotifiation(job, done);
-  //   expect(done).toBeCalledTimes(1);
-  // })
-
-  // it('should send multiple request after 1 minute', async () => {
-  //   let buff  = new SensorBuffer(expectedOutput.customer_device_id, '', expectedOutput.sensor_readings);
-  //   await global.redisk.save(buff)
-  //   let result = await global.redisk.getOne(SensorBuffer, expectedOutput.customer_device_id);
-  //   const job = {
-  //     data: result
-  //   }
-  //   const done = jest.fn()
-
-  //   await desktopPushNotifiation(job, done);
-  //   expect(done).toHaveBeenCalled();
-
-  //   let updated = await global.redisk.getOne(SensorBuffer, expectedOutput.customer_device_id);
-  //   let latestEvents = JSON.parse(updated.latest_events);
-  //   const date = new Date()
-  //   date.setMinutes(date.getMinutes() - 10);
-  //   latestEvents[0].timestamp = date;
-  //   updated.latest_events = JSON.stringify(latestEvents);
-  //   await global.redisk.save(updated)
-
-  //   await desktopPushNotifiation(job, done);
-  //   expect(done).toBeCalledTimes(2);
-  // })
 })

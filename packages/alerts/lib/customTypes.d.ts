@@ -10,15 +10,22 @@ export type Alert = {
   json_rule: string;
 }
 
-export type HydratedSensorBufferPayload = {
-  customer_device_id: string,
-  device_buffer: {
-    bufferSize: string,
-    customer_device_id: string,
-    name: string,
-    sensor_readings: string,
-  },
-  alert_config: any
+export type RawAlertRuleInput = {
+  customer_device_id: string;
+  sensor_readings: string;
+  alert_configs: Alert[];
+  latest_events: any[];
+  last_event_timestamp: any;
+}
+
+export type RawAlertRuleInputWithParsedSensorHash = {
+  customer_device_id: string;
+  sensor_readings: {
+    [key: string]: any[];
+  };
+  latest_events: any[];
+  alert_configs: Alert[];
+  last_event_timestamp: any;
 }
 
 export interface JobInterface {
@@ -57,3 +64,5 @@ declare global {
   var redis: any;
   var redisk: any;
 }
+
+declare module 'fastq';
