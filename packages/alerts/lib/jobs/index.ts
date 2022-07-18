@@ -1,49 +1,21 @@
 import desktopPushNotifiation from "../alerts/desktopPushNotification";
 import email from "../alerts/email";
 import allNotificationsHandler from "../alerts/allNotifications";
+import type { queue } from "fastq";
 
-// tslint:disable-next-line: variable-name
-const Queue = require('bull')
-console.log('this should be firing')
-interface Queues {
-  outboundSMSQ: any;
-  outboundEmailQ: any;
-  outboundMobilePushNotificationQ: any;
-  outboundDesktopPushNotificationQ: any;
-  allNotificationsQ: any;
-}
-
-const redisUrl = process.env.REDIS_URI || 'redis://127.0.0.1:6379'
-console.log('redisuUrl', redisUrl)
-
-const redisOptions = redisUrl.includes('rediss') ? {
-  redis: {
-    tls: {}
-  }
-} : {}
 // Define a queue
-const outboundSMSQ: any = new Queue('outbound_sms_q', redisUrl, redisOptions)
+const outboundSMSQ: any = null
 
-const outboundEmailQ: any = new Queue('outbound_email_q', redisUrl, redisOptions)
+const outboundEmailQ: queue = require('fastq')(email, 1)
 
-const outboundMobilePushNotificationQ: any = new Queue('outbound_mobile_push_notification_q', redisUrl, redisOptions)
+const outboundMobilePushNotificationQ: queue = require('fastq')(desktopPushNotifiation, 1)
 
-const outboundDesktopPushNotificationQ: any = new Queue('outbound_desktop_push_notification_q', redisUrl, redisOptions)
+const outboundDesktopPushNotificationQ: any = null
 
-const allNotificationsQ: any = new Queue('all_notification_q', redisUrl, redisOptions)
+const allNotificationsQ: queue = require('fastq')(allNotificationsHandler, 1)
 
-// outboundSMSQ.process()
-outboundEmailQ.process(email)
-// outboundMobilePushNotificationQ.process()
-outboundDesktopPushNotificationQ.process(desktopPushNotifiation)
-allNotificationsQ.process(allNotificationsHandler)
 
-// queues.outboundSensorReadingQueue.add(finalBatchResults, {
-//   attempts: 2,
-//   removeOnComplete: true
-// })
-
-const allQueues: Queues = {
+const allQueues: { [key: string]: queue} = {
   outboundSMSQ,
   outboundEmailQ,
   outboundMobilePushNotificationQ,

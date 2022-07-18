@@ -1,22 +1,12 @@
-export function findLatestEventsForSensor(sensorBuffer: any) {
-  try {
-    const latestEvents = JSON.parse(sensorBuffer.latest_events)
-    if(!latestEvents.length) return null
+import { RawAlertRuleInputWithParsedSensorHash } from "../../lib/customTypes"
+import nodeCache from '../cache/nodeCache';
 
-    return latestEvents
-  } catch (e) {
-    return null
-  }
-}
-
-export async function saveLatestEvent(redisk: any, sensorBuffer: any, event: any) {
+export async function saveLatestEvent(alert: RawAlertRuleInputWithParsedSensorHash, event: any) {
   try {
-    let latestEvents = JSON.parse(sensorBuffer.latest_events) || []
-    if(!Array.isArray(latestEvents)) latestEvents = []
-    latestEvents.push(event)
-    sensorBuffer.latest_events = JSON.stringify(latestEvents)
-    await redisk.save(sensorBuffer)
-    return sensorBuffer
+    if(!Array.isArray(alert.latest_events)) alert.latest_events = []
+    alert.latest_events.push(event)
+    
+    return alert
   } catch (e) {
     return null
   }

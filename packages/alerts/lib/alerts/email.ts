@@ -1,43 +1,70 @@
-import { JobInterface } from "../../lib/customTypes";
-import JuniperCore from '@juniper-tech/core';
-import { findLatestEventsForSensor, saveLatestEvent } from '../utils/sensorBufferUtils';
 import _ from "lodash";
+import moment from 'moment'
 import { shouldSend, saveAndExit } from '../utils/eventUtils';
 import sgMail from '@sendgrid/mail';
+import { RawAlertRuleInputWithParsedSensorHash } from '../../lib/customTypes';
+import nodeCache from '../cache/nodeCache';
 
-const { JuniperRedisUtils } = JuniperCore
-const { SensorBuffer } = JuniperRedisUtils
+export default async function email(job: RawAlertRuleInputWithParsedSensorHash[], done:  (params?:any) => void) {
+    const [data] = job
+    // fetch sensor from node cache
+    try {
+    const alertCache:RawAlertRuleInputWithParsedSensorHash | undefined = nodeCache.get(data.customer_device_id);
+    // instantiate an empty buffer for sensor name
+  
+    if(!alertCache || alertCache.latest_events.length == 0) {
+      const sent:any = await sendNotification(data)
+      const latest_event = { event: 'email' }
+      if(sent) return saveAndExit(data, latest_event, done)
+      return done(new Error('Error sending push notification'))
+    }
 
-export default async function email(job: JobInterface, done:  (params?:any) => void) {
-  const { data: jobData }: any = job;
-  const [ data ] = jobData
+    let sendIt = shouldSend(alertCache?.latest_events)
 
-  let buffer = await global.redisk.getOne(SensorBuffer, `${data.device_buffer.customer_device_id}`);
-  // instantiate an empty buffer for sensor name
-  let events = await findLatestEventsForSensor(buffer);
- 
-  if(!events) {
+    if(!sendIt) return done()
+
     const sent:any = await sendNotification(data)
-    if(sent) return saveAndExit(buffer, done)
+    const latest_event = { event: 'email' }
+    if(sent) return saveAndExit(data, latest_event, done)
+    return done(new Error('Error sending push notification'))
+  } catch(err) {
     return done(new Error('Error sending push notification'))
   }
-  let sendIt = shouldSend(findLatestEventsForSensor(buffer))
-
-  if(!sendIt) return done()
-
-  const sent:any = await sendNotification(data)
-  if(sent) return saveAndExit(buffer, done)
-  return done(new Error('Error sending push notification'))
 }
 
 function sendNotification(data: any) {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY || '');
+  console.log('data', data.events[0].params)
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY || '')
+  let date = moment().format('ll')
   const msg = {
-    to: 'daniel.ashcraft@ofashandfire.com',
+    to: data.events[0].params[0].data.email,
     from: 'dashcraft@junipergarden.co',
-    subject: 'Hello world',
-    text: 'Hello plain world!',
-    html: '<p>Hello HTML world!</p>',
+    subject: `🚨 Alert Was Triggered on ${date}`,
+    html: `<section>
+      <h1>
+        You had an alert that was triggered on ${date}.
+      </h1>
+      <h3>
+        Here are some details:
+      </h3>
+      ${data.results.conditions.any.reduce((acc:string, curr:any) => {
+        return acc + curr.all.reduce((newAcc: any, newCurr: any) => {
+          return newAcc + 
+          `<div style="margin-bottom: 5%;">
+              <p>Alert Operator: ${newCurr.operator}</p>
+              <p>Threshold Set: : ${newCurr.value}</p>
+              <p>Data Point Name: ${newCurr.fact}</p>
+              <p>Data Point Value: ${newCurr.factResult}</p>
+              <p>Did trigger?: ${newCurr.result}</p>
+          </div>
+          </br>
+          </br>
+          </br>
+          </br>
+          `
+        }, '') 
+      }, '')}
+    </section>`,
   };
   
   return sgMail.send(msg);

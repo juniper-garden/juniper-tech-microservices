@@ -14,7 +14,6 @@ export function bulkInsertSensorData({ readingsMapped, finalBatchResults }: { re
     .catch((err:any) => {
       console.error('error', err)
     })
-    
   }
 
   return { readingsMapped, finalBatchResults }

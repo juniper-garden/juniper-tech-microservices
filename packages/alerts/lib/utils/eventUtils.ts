@@ -1,11 +1,13 @@
-import { findLatestEventsForSensor, saveLatestEvent } from './/sensorBufferUtils';
+import { RawAlertRuleInputWithParsedSensorHash } from '../../lib/customTypes';
+import nodeCache from '../cache/nodeCache';
 
 
-export function shouldSend(events:any) {
+export function shouldSend(event:any) {
   const currentTime = new Date();
+
   currentTime.setMinutes(currentTime.getMinutes() - 1);
   // sort events by timestamp
-  const transformed = events.map((event: any) => {
+  const transformed = event.map((event: any) => {
     return new Date(event.timestamp).getTime()
   })
   const latest = transformed.sort((a:any, b:any) => {
@@ -15,10 +17,15 @@ export function shouldSend(events:any) {
   return currentTime.getTime() > prevDate;
 }
 
-export async function saveAndExit(buffer: any, done: (params?: any) => void) {
+export async function saveAndExit(alert: RawAlertRuleInputWithParsedSensorHash, latest_event: any,  done: (params?: any) => void) {
   try {
-    await saveLatestEvent(global.redisk, buffer, { event: 'email', timestamp: new Date() })
-    return done({ event: 'email', timestamp: new Date() })
+    let timestamp = Date.now()
+    latest_event.timestamp = timestamp
+    alert.latest_events.push(latest_event)
+    alert.last_event_timestamp = timestamp
+
+    nodeCache.set(alert.customer_device_id, alert)
+    return done(latest_event)
   } catch (e) {
     return done(new Error('Error sending push notification'))
   }
