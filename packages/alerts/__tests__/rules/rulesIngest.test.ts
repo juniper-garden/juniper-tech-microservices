@@ -81,6 +81,7 @@ describe('Tests for rulesIngest function', () => {
   it('Should fetch data by customerId from id array', async () => {
     const res:any = await rulesIngest(idArr)
     expect(res).toHaveLength(2)
+    expect(res[0].results[0]).toBe({})
     expect(res[0].events[0].type).toBe('SUCCESS')
     expect(res[0].events[0].params).toEqual(sendAlertRule.event.params)
     expect(res[0].customer_device_id).toBe("81eaec8b-cc5a-4fe1-811c-d996d4bfe0ad")

@@ -55,12 +55,32 @@ describe("Test the desktop push notification job", () =>{
       data: [
         {
           customer_device_id: "81eaec8b-cc5a-4fe1-811c-d996d4bfe0ad",
+          facts: { temperature: 21.76, humidity: 21.76, pressure: 21.76 },
+          results: {
+            "conditions":
+            {
+              "priority":1,
+              "any":[
+                {
+                  "priority":1,
+                  "all":[
+                    {"operator":"greaterThanInclusive","value":10,"fact":"temperature","factResult":21.76,"result":true},
+                    {"operator":"lessThanInclusive","value":50,"fact":"humidity","factResult":21.76,"result":true}
+                  ]
+                }
+              ]
+            },
+            "event":{"type":"SUCCESS","params":[{"type":"mobilePushNotification"},{"type":"email","data":{"email":"daniel.ashcraft@ofashandfire.com"}}]},"priority":1,"result":true},
           events: [
             {
               type: 'SUCCESS',
               params: [
                 {
-                  type: 'email'
+                  type: 'email',
+                  data: {
+                    email: "daniel.ashcraft@ofashandfire.com",
+                    alert_type: ''
+                  }
                 }
               ]
             }
@@ -68,9 +88,10 @@ describe("Test the desktop push notification job", () =>{
         }
       ]
     }
+  
     const done = jest.fn()
 
     await allNotificationsHandler(testJob, done);
-    expect(done).toBeCalledTimes(1);
+    expect(done).toBeCalledTimes(2);
   })
 })

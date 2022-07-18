@@ -1,4 +1,5 @@
 import _ from "lodash";
+import moment from 'moment'
 import { shouldSend, saveAndExit } from '../utils/eventUtils';
 import sgMail from '@sendgrid/mail';
 import { RawAlertRuleInputWithParsedSensorHash } from '../../lib/customTypes';
@@ -8,7 +9,6 @@ export default async function email(job: RawAlertRuleInputWithParsedSensorHash[]
     const [data] = job
     // fetch sensor from node cache
     try {
-    console.log('made  here', data)
     const alertCache:RawAlertRuleInputWithParsedSensorHash | undefined = nodeCache.get(data.customer_device_id);
     // instantiate an empty buffer for sensor name
   
@@ -25,7 +25,6 @@ export default async function email(job: RawAlertRuleInputWithParsedSensorHash[]
 
     const sent:any = await sendNotification(data)
     const latest_event = { event: 'email' }
-    console.log('sent?', sent)
     if(sent) return saveAndExit(data, latest_event, done)
     return done(new Error('Error sending push notification'))
   } catch(err) {
@@ -33,14 +32,39 @@ export default async function email(job: RawAlertRuleInputWithParsedSensorHash[]
   }
 }
 
-function sendNotification(data: RawAlertRuleInputWithParsedSensorHash) {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY || '');
+function sendNotification(data: any) {
+  console.log('data', data.events[0].params)
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY || '')
+  let date = moment().format('ll')
   const msg = {
-    to: 'daniel.ashcraft@ofashandfire.com',
+    to: data.events[0].params[0].data.email,
     from: 'dashcraft@junipergarden.co',
-    subject: 'Hello world',
-    text: 'Hello plain world!',
-    html: '<p>Hello HTML world!</p>',
+    subject: `🚨 Alert Was Triggered on ${date}`,
+    html: `<section>
+      <h1>
+        You had an alert that was triggered on ${date}.
+      </h1>
+      <h3>
+        Here are some details:
+      </h3>
+      ${data.results.conditions.any.reduce((acc:string, curr:any) => {
+        return acc + curr.all.reduce((newAcc: any, newCurr: any) => {
+          return newAcc + 
+          `<div style="margin-bottom: 5%;">
+              <p>Alert Operator: ${newCurr.operator}</p>
+              <p>Threshold Set: : ${newCurr.value}</p>
+              <p>Data Point Name: ${newCurr.fact}</p>
+              <p>Data Point Value: ${newCurr.factResult}</p>
+              <p>Did trigger?: ${newCurr.result}</p>
+          </div>
+          </br>
+          </br>
+          </br>
+          </br>
+          `
+        }, '') 
+      }, '')}
+    </section>`,
   };
   
   return sgMail.send(msg);
