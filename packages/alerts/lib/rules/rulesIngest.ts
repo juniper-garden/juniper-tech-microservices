@@ -8,6 +8,7 @@ export function sanitizeAlerts(dataWithParsedReadings:any[]): RawAlertRuleInputW
   
   return dataWithParsedReadings
   .reduce((acc: RawAlertRuleInputWithParsedSensorHash[], raw_alert: RawAlertRuleInputWithParsedSensorHash) => {
+    if(!raw_alert.customer_device_id) return acc
     let cachedRecord: RawAlertRuleInputWithParsedSensorHash | undefined = nodeCache.get(raw_alert.customer_device_id)
 
     if(cachedRecord) {
