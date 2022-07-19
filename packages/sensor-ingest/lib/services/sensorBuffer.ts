@@ -16,7 +16,7 @@ type SensorBufferParam = {
 export default async function sensorBuffer(data: SensorBufferParam): Promise<any> {
   let unwrappedData = await data
   const { readingsMapped, finalBatchResults } = unwrappedData
-  if(!finalBatchResults?.length) return null
+  if(!finalBatchResults?.length || !readingsMapped) return null
   // keys alerts_config:alerts_config81eaec8b-cc5a-4fe1-811c-d996d4bfe0ad:CustomerDevice
   return new Promise(async (resolve, reject) => {
       Object.keys(readingsMapped).map(async (customerDeviceId: string) => {
