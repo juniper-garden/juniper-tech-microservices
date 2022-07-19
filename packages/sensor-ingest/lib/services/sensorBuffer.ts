@@ -33,7 +33,7 @@ export default async function sensorBuffer(data: SensorBufferParam): Promise<any
   })
 }
 
-function sendSensorValuesToAlertsQueue ({readingsMapped, customer_device_id, alerts}: any) {
+function sendSensorValuesToAlertsQueue ({readingsMapped, customer_device_id, alert_configs}: any) {
   Object.keys(readingsMapped[customer_device_id]).map(async () => {
     if(!readingsMapped[customer_device_id]) return
     
@@ -42,7 +42,7 @@ function sendSensorValuesToAlertsQueue ({readingsMapped, customer_device_id, ale
     await global.producer.send({
       topic: 'alerts-topic',
       messages: [
-          { key: 'data', value: JSON.stringify({ readings: sensorReadings, alert_config: alerts.map((x: any) => x.json_rule) }), partition: 0 }
+          { key: 'data', value: JSON.stringify({ readings: sensorReadings, alert_config: alert_configs.map((x: any) => x.json_rule) }), partition: 0 }
       ]
     })
   })
