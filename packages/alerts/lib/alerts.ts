@@ -15,7 +15,6 @@ process.once('SIGTERM', async function (code) {
 
 
 async function alerts() {
-  console.log('this fired')
   const consumer = await JuniperConsumer(kafka, 'alerts-topic-consumer-1', null)
 
   await consumer.subscribe({ topic: 'alerts-topic', fromBeginning: true })
@@ -28,8 +27,15 @@ async function alerts() {
         if (!isRunning() || isStale()) {
           break
         }
+        let pdata = null
+        try {
+          pdata = JSON.parse(message?.value?.toString() || '')
+        } catch(err) {
+          console.info(err)
+        }
 
-        parsedData.push(JSON.parse(message?.value?.toString() || ''))
+        if(pdata) parsedData.push(pdata)
+
         resolveOffset(message.offset)
       }
       console.log('new data inbound', parsedData)
