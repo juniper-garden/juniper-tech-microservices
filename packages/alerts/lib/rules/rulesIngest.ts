@@ -4,8 +4,7 @@ import runRules from "./rulesEngine"
 import queues from "../../lib/jobs"
 import nodeCache from '../cache/nodeCache';
 
-export function sanitizeAlerts(data:RawAlertRuleInput[]): RawAlertRuleInputWithParsedSensorHash[] {
-  let dataWithParsedReadings: RawAlertRuleInputWithParsedSensorHash[] = data.map(raw_data => ({ ...raw_data, sensor_readings: JSON.parse(raw_data.sensor_readings)}))
+export function sanitizeAlerts(dataWithParsedReadings:any[]): RawAlertRuleInputWithParsedSensorHash[] {
   
   return dataWithParsedReadings
   .reduce((acc: RawAlertRuleInputWithParsedSensorHash[], raw_alert: RawAlertRuleInputWithParsedSensorHash) => {
