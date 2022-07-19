@@ -8,7 +8,7 @@ const { SensorBuffer, JuniperRedisBuffer } = JuniperRedisUtils
 const expectedOutput = {
 	customer_device_id: "81eaec8b-cc5a-4fe1-811c-d996d4bfe0ad",
 	name: "",
-	readings: "{\"temperature\":[{\"value\":\"21.76\",\"unit\":\"C\",\"timestamp\":1650502574,\"name\":\"temperature\"}],\"humidity\":[{\"value\":\"21.76\",\"unit\":\"C\",\"timestamp\":1650502574,\"name\":\"humidity\"}],\"pressure\":[{\"value\":\"21.76\",\"unit\":\"C\",\"timestamp\":1650502574,\"name\":\"pressure\"}]}",
+	sensor_readings: "{\"temperature\":[{\"value\":\"21.76\",\"unit\":\"C\",\"timestamp\":1650502574,\"name\":\"temperature\"}],\"humidity\":[{\"value\":\"21.76\",\"unit\":\"C\",\"timestamp\":1650502574,\"name\":\"humidity\"}],\"pressure\":[{\"value\":\"21.76\",\"unit\":\"C\",\"timestamp\":1650502574,\"name\":\"pressure\"}]}",
 }
 
 describe("Test the desktop push notification job", () => {
@@ -18,7 +18,7 @@ describe("Test the desktop push notification job", () => {
   it('should send a notification', async () => {
     let alert: RawAlertRuleInputWithParsedSensorHash  = {
       customer_device_id: expectedOutput.customer_device_id,
-      readings: JSON.parse(expectedOutput.readings),
+      sensor_readings: JSON.parse(expectedOutput.sensor_readings),
       latest_events: [],
       last_event_timestamp: undefined,
       alert_configs: []
@@ -43,7 +43,7 @@ describe("Test the desktop push notification job", () => {
   it('should not send multiple requests back to back', async () => {
     let alert: RawAlertRuleInputWithParsedSensorHash  = {
       customer_device_id: expectedOutput.customer_device_id,
-      readings: JSON.parse(expectedOutput.readings),
+      sensor_readings: JSON.parse(expectedOutput.sensor_readings),
       latest_events: [
         {
           type: 'desktopPushNotification',
@@ -80,7 +80,7 @@ describe("Test the desktop push notification job", () => {
     
     let alert: RawAlertRuleInputWithParsedSensorHash  = {
       customer_device_id: expectedOutput.customer_device_id,
-      readings: JSON.parse(expectedOutput.readings),
+      sensor_readings: JSON.parse(expectedOutput.sensor_readings),
       latest_events: [
         {
           type: 'desktopPushNotification',
