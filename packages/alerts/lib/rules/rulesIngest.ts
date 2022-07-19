@@ -33,7 +33,6 @@ function upsertNewReadings(raw_alert: RawAlertRuleInputWithParsedSensorHash, cac
   let keys = Object.keys(raw_alert.sensor_readings)
   keys.forEach(inboundKey => {
     console.log('inboundKey', inboundKey)
-    console.log('inboundKey', raw_alert.sensor_readings[inboundKey], cached_record.sensor_readings[inboundKey])
     if(cached_record.sensor_readings[inboundKey].length >= 10) {
       let new_readings = raw_alert.sensor_readings[inboundKey].slice(1)
       let old_readings = cached_record.sensor_readings[inboundKey].slice(0, -1)
