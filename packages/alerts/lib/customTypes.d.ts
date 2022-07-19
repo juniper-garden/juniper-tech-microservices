@@ -12,7 +12,7 @@ export type Alert = {
 
 export type RawAlertRuleInput = {
   customer_device_id: string;
-  readings: string;
+  sensor_readings: string;
   alert_configs: Alert[];
   latest_events: any[];
   last_event_timestamp: any;
