@@ -11,7 +11,7 @@ export function sanitizeAlerts(dataWithParsedReadings:any[]): RawAlertRuleInputW
     if(!raw_alert.customer_device_id) return acc
     let cachedRecord: RawAlertRuleInputWithParsedSensorHash | undefined = nodeCache.get(raw_alert.customer_device_id)
 
-    if(cachedRecord) {
+    if(cachedRecord && Object.keys(raw_alert.readings).length > 0) {
       let updatedRecord = upsertNewReadings(raw_alert, cachedRecord)
       if(updatedRecord.last_event_timestamp > (Date.now() - (5 * 60 * 1000))) return acc
       updatedRecord.last_event_timestamp = Date.now()
@@ -30,17 +30,17 @@ export function sanitizeAlerts(dataWithParsedReadings:any[]): RawAlertRuleInputW
 
 function upsertNewReadings(raw_alert: RawAlertRuleInputWithParsedSensorHash, cached_record: RawAlertRuleInputWithParsedSensorHash): RawAlertRuleInputWithParsedSensorHash {
   // remove first sensor reading and add new sensor readings to end of array
-  let keys = Object.keys(raw_alert.sensor_readings)
+  let keys = Object.keys(raw_alert.readings)
   keys.forEach(inboundKey => {
-    if(cached_record.sensor_readings[inboundKey].length >= 10) {
-      let new_readings = raw_alert.sensor_readings[inboundKey].slice(1)
-      let old_readings = cached_record.sensor_readings[inboundKey].slice(0, -1)
+    if(cached_record.readings[inboundKey].length >= 10) {
+      let new_readings = raw_alert.readings[inboundKey].slice(1)
+      let old_readings = cached_record.readings[inboundKey].slice(0, -1)
       let combined_readings = old_readings.concat(new_readings)
-      cached_record.sensor_readings[inboundKey] = combined_readings
+      cached_record.readings[inboundKey] = combined_readings
       return
     }
 
-    cached_record.sensor_readings[inboundKey].concat(raw_alert.sensor_readings[inboundKey])
+    cached_record.readings[inboundKey].concat(raw_alert.readings[inboundKey])
   })
   return cached_record
 }

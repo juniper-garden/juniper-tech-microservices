@@ -12,7 +12,7 @@ export type Alert = {
 
 export type RawAlertRuleInput = {
   customer_device_id: string;
-  sensor_readings: string;
+  readings: string;
   alert_configs: Alert[];
   latest_events: any[];
   last_event_timestamp: any;
@@ -20,7 +20,7 @@ export type RawAlertRuleInput = {
 
 export type RawAlertRuleInputWithParsedSensorHash = {
   customer_device_id: string;
-  sensor_readings: {
+  readings: {
     [key: string]: any[];
   };
   latest_events: any[];
