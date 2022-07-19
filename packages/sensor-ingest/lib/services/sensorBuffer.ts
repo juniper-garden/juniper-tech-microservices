@@ -26,6 +26,7 @@ export default async function sensorBuffer(data: SensorBufferParam): Promise<any
           SELECT * FROM alerts WHERE alertable_type = 'CustomerDevice' and alertable_id = '${customerDeviceId}' and status = 0
         `)
         if(!rows || rows.length === 0) return resolve({ readingsMapped, finalBatchResults })
+        console.log('there should be an alert triggered')
         await sendSensorValuesToAlertsQueue({readingsMapped, customer_device_id: customerDeviceId, alert_configs: rows })
         resolve({ readingsMapped, finalBatchResults })
     })

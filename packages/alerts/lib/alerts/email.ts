@@ -33,7 +33,6 @@ export default async function email(job: RawAlertRuleInputWithParsedSensorHash[]
 }
 
 function sendNotification(data: any) {
-  console.log('data', data.events[0].params)
   sgMail.setApiKey(process.env.SENDGRID_API_KEY || '')
   let date = moment().format('ll')
   const msg = {
