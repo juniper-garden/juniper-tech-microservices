@@ -16,7 +16,6 @@ type SensorBufferParam = {
 export default async function sensorBuffer(data: SensorBufferParam): Promise<any> {
   let unwrappedData = await data
   const { readingsMapped, finalBatchResults } = unwrappedData
-  console.log('readingsMapped', readingsMapped, finalBatchResults)
   if(!finalBatchResults?.length) return null
   // keys alerts_config:alerts_config81eaec8b-cc5a-4fe1-811c-d996d4bfe0ad:CustomerDevice
   return new Promise(async (resolve, reject) => {
@@ -26,7 +25,6 @@ export default async function sensorBuffer(data: SensorBufferParam): Promise<any
         const [rows, meta]: any = await JGConnection.query(`
           SELECT * FROM alerts WHERE alertable_type = 'CustomerDevice' and alertable_id = '${customerDeviceId}' and status = 0
         `)
-        console.log('rows, meta', rows, meta)
         if(!rows || rows.length === 0) return resolve({ readingsMapped, finalBatchResults })
         await sendSensorValuesToAlertsQueue({readingsMapped, customer_device_id: customerDeviceId, alert_configs: rows })
         resolve({ readingsMapped, finalBatchResults })
