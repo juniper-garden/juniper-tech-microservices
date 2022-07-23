@@ -13,9 +13,14 @@ export default async function runRules(data: RawAlertRuleInputWithParsedSensorHa
 
   // define fact(s) known at runtime
   const facts = buildFactFromReadings(data?.sensor_readings)
-  const ruleResults = await engine.run(facts)
-  if (!ruleResults.events.length) return { events: [], facts }
-  return { events: ruleResults.events, results: ruleResults.results, facts, device_buffer: data.sensor_readings, customer_device_id: data.customer_device_id }
+  try {
+    const ruleResults = await engine.run(facts)
+    if (!ruleResults.events.length) return { events: [], facts }
+    return { events: ruleResults.events, results: ruleResults.results, facts, device_buffer: data.sensor_readings, customer_device_id: data.customer_device_id }
+  } catch (err) {
+    console.log(err)
+    return { events: [], results: [], facts, device_buffer: data.sensor_readings, customer_device_id: data.customer_device_id }
+  }
 }
 
 function buildFactFromReadings(data: any) {
