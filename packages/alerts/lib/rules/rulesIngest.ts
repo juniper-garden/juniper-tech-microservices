@@ -64,7 +64,7 @@ export default async function rulesIngest(data:RawAlertRuleInput[]){
     // if (process.env.USE_QUEUES) {
     //   queues.allNotificationsQ.push({data: allTriggeredAlerts})
     // }
-    console.log('allTriggeredAlerts', allTriggeredAlerts)
+    if(allTriggeredAlerts.length) console.log('allTriggeredAlerts',  allTriggeredAlerts)
     return allTriggeredAlerts
   } catch(err) {
     console.log('err', err)
