@@ -38,8 +38,11 @@ async function alerts() {
 
         resolveOffset(message.offset)
       }
-      console.log('new data inbound', parsedData)
-      await rulesIngest(parsedData)
+      try {
+        await rulesIngest(parsedData)
+      } catch(err) {
+        console.info('error in rules ingest', err)
+      }
       await heartbeat()
     }
   }).catch((err: any) => {

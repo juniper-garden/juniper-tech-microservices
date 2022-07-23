@@ -48,20 +48,25 @@ function upsertNewReadings(raw_alert: RawAlertRuleInputWithParsedSensorHash, cac
 
 export default async function rulesIngest(data:RawAlertRuleInput[]){
   // group data by id and sort by timestamp then run through rulesEngine
-  if(!data.length) {
-    return
+  try {
+    if(!data.length) {
+      return
+    }
+
+    // double check alert input is not duplicated and has a rule
+    
+    let filterValidAlerts = sanitizeAlerts(data)
+
+    let results = await Promise.all(filterValidAlerts.map(runRules))
+
+    let allTriggeredAlerts:any = results.filter(record => record?.events.length)
+    // // common ingress for all event types into the queue
+    // if (process.env.USE_QUEUES) {
+    //   queues.allNotificationsQ.push({data: allTriggeredAlerts})
+    // }
+    console.log('allTriggeredAlerts', allTriggeredAlerts)
+    return allTriggeredAlerts
+  } catch(err) {
+    console.log('err', err)
   }
-
-  // double check alert input is not duplicated and has a rule
-  let filterValidAlerts = sanitizeAlerts(data)
-
-  let results = await Promise.all(filterValidAlerts.map(runRules))
-
-  let allTriggeredAlerts:any = results.filter(record => record?.events.length)
-  // // common ingress for all event types into the queue
-  // if (process.env.USE_QUEUES) {
-  //   queues.allNotificationsQ.push({data: allTriggeredAlerts})
-  // }
-  console.log('allTriggeredAlerts', allTriggeredAlerts)
-  return allTriggeredAlerts
 }
