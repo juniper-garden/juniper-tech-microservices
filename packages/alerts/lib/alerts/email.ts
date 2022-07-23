@@ -6,6 +6,7 @@ import { RawAlertRuleInputWithParsedSensorHash } from '../../lib/customTypes';
 import nodeCache from '../cache/nodeCache';
 
 export default async function email(job: RawAlertRuleInputWithParsedSensorHash[], done:  (params?:any) => void) {
+    console.log('email was triggered')
     const [data] = job
     // fetch sensor from node cache
     try {
