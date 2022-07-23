@@ -42,7 +42,7 @@ function sendSensorValuesToAlertsQueue ({readingsMapped, customer_device_id, ale
     await global.producer.send({
       topic: 'alerts-topic',
       messages: [
-          { key: 'data', value: JSON.stringify({ customer_device_id: customer_device_id, sensor_readings: sensorReadings, alert_config: alert_configs.map((x: any) => x.json_rule) }), partition: 0 }
+          { key: 'data', value: JSON.stringify({ customer_device_id: customer_device_id, sensor_readings: sensorReadings, alert_configs: alert_configs.map((x: any) => x.json_rule), latest_events: null, latest_event_timestamp: null }), partition: 0 }
       ]
     })
   })
