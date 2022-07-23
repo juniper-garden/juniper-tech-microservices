@@ -21,7 +21,7 @@ export async function saveAndExit(alert: RawAlertRuleInputWithParsedSensorHash, 
   try {
     let timestamp = Date.now()
     latest_event.timestamp = timestamp
-    alert.latest_events.push(latest_event)
+    alert.latest_events?.push(latest_event)
     alert.last_event_timestamp = timestamp
 
     nodeCache.set(alert.customer_device_id, alert)

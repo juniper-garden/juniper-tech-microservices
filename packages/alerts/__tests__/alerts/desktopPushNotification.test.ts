@@ -108,7 +108,7 @@ describe("Test the desktop push notification job", () => {
     const date = new Date()
     date.setMinutes(date.getMinutes() - 10);
     latestEvent.last_event_timestamp = date;
-    updated.latest_events[0] = latestEvent
+    if(updated.latest_events) updated.latest_events[0] = latestEvent
     nodeCache.set(updated.customer_device_id, updated)
 
     await desktopPushNotifiation(job, done);
