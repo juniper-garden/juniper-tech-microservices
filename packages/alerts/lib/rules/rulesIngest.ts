@@ -62,7 +62,6 @@ export default async function rulesIngest(data:RawAlertRuleInput[]){
     let results = await Promise.all(filterValidAlerts.map(runRules))
 
     let allTriggeredAlerts:any = results.filter(record => record?.events.length)
-    console.log('made it this far', allTriggeredAlerts)
     // // common ingress for all event types into the queue
     if (process.env.USE_QUEUES) {
       queues.allNotificationsQ.push({data: allTriggeredAlerts})

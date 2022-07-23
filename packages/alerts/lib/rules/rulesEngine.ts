@@ -6,10 +6,8 @@ export default async function runRules(data: RawAlertRuleInputWithParsedSensorHa
    * Setup a new engine
    */
   if(!data.alert_configs || data.alert_configs.length === 0) return
-  let engine = new Engine([], { allowUndefinedFacts: true })
-  data.alert_configs.forEach((rule: any) => {
-    engine.addRule({...rule})
-  })
+  console.log('made it here')
+  let engine = new Engine(data.alert_configs, { allowUndefinedFacts: true })
 
   // define fact(s) known at runtime
   const facts = buildFactFromReadings(data?.sensor_readings)
