@@ -36,6 +36,7 @@ function sendNotification(data: any) {
   console.log('sent an email')
   sgMail.setApiKey(process.env.SENDGRID_API_KEY || '')
   let date = moment().format('ll')
+  console.log('data.events[0].params[0].data.email', data.events[0].params[0].data.email)
   const msg = {
     to: data.events[0].params[0].data.email,
     from: 'dashcraft@junipergarden.co',
