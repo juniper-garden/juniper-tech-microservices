@@ -23,7 +23,6 @@ async function alerts() {
     eachBatchAutoResolve: true,
     eachBatch: async ({ batch, resolveOffset, heartbeat, isRunning, isStale }: EachBatchPayload) => {
       const parsedData = []
-      console.log('did this start?')
 
       for (const message of batch.messages) {
         if (!isRunning() || isStale()) {
@@ -35,7 +34,6 @@ async function alerts() {
         } catch(err) {
           console.info(err)
         }
-        console.log('more data coming through')
         if(pdata) parsedData.push(pdata)
 
         resolveOffset(message.offset)
