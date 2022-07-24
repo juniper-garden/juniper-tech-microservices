@@ -16,9 +16,9 @@ process.once('SIGTERM', async function (code) {
 
 async function alerts() {
   const rando = Math.floor((Math.random()+1) * 100);
-  const consumer = await JuniperConsumer(kafka, `alerts-topic-consumer-${rando}`, null)
+  const consumer = await JuniperConsumer(kafka, `alerts-topic-consumer-1`, null)
 
-  await consumer.subscribe({ topic: 'alerts-topic', fromBeginning: true })
+  await consumer.subscribe({ topic: 'alerts-topic', fromBeginning: false })
   await consumer.run({
     eachBatchAutoResolve: true,
     eachBatch: async ({ batch, resolveOffset, heartbeat, isRunning, isStale }: EachBatchPayload) => {
