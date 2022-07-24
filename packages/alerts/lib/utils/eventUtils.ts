@@ -17,6 +17,19 @@ export function shouldSend(event:any) {
   return currentTime.getTime() > prevDate;
 }
 
+export async function saveAndExitNoEvent(alert: RawAlertRuleInputWithParsedSensorHash, latest_event: any,  done: (params?: any) => void) {
+  try {
+    let timestamp = Date.now()
+    latest_event.timestamp = timestamp
+    alert.latest_events?.push(latest_event)
+
+    nodeCache.set(alert.customer_device_id, alert)
+    return done(latest_event)
+  } catch (e) {
+    return done(new Error('Error sending push notification'))
+  }
+}
+
 export async function saveAndExit(alert: RawAlertRuleInputWithParsedSensorHash, latest_event: any,  done: (params?: any) => void) {
   try {
     let timestamp = Date.now()

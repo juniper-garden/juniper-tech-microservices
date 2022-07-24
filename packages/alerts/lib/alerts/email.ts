@@ -1,6 +1,6 @@
 import _ from "lodash";
 import moment from 'moment'
-import { shouldSend, saveAndExit } from '../utils/eventUtils';
+import { shouldSend, saveAndExit, saveAndExitNoEvent } from '../utils/eventUtils';
 import sgMail from '@sendgrid/mail';
 import { RawAlertRuleInputWithParsedSensorHash } from '../../lib/customTypes';
 import nodeCache from '../cache/nodeCache';
@@ -20,7 +20,7 @@ export default async function email(job: RawAlertRuleInputWithParsedSensorHash[]
       const latest_event = { event: 'email' }
 
       if(sent) return saveAndExit(data, latest_event, done)
-      return done(new Error('Error sending push notification'))
+      return saveAndExitNoEvent(data, latest_event, done)
     }
 
     let sendIt = shouldSend(alertCache?.latest_events)
@@ -31,7 +31,7 @@ export default async function email(job: RawAlertRuleInputWithParsedSensorHash[]
 
     const latest_event = { event: 'email' }
     if(sent) return saveAndExit(data, latest_event, done)
-    return done(new Error('Error sending push notification'))
+    return saveAndExitNoEvent(data, latest_event, done)
   } catch(err) {
     return done(new Error('Error sending push notification'))
   }
