@@ -13,7 +13,7 @@ export default function allNotificationsHandler(job: JobInterface, done: done) {
   }
 
   const { data }: any = job
-  // console.log('made it here', data)
+  if(data.length == 0) return done(null)
   data.forEach((alert: TypicalAlertEngineResult) => {
     const events = alert.events.map(item => item.params)
     if(!events.length) return

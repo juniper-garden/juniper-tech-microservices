@@ -15,14 +15,16 @@ process.once('SIGTERM', async function (code) {
 
 
 async function alerts() {
-  const consumer = await JuniperConsumer(kafka, 'alerts-topic-consumer-1', null)
+  const rando = Math.floor((Math.random()+1) * 100);
+  const consumer = await JuniperConsumer(kafka, `alerts-topic-consumer-${rando}`, null)
 
   await consumer.subscribe({ topic: 'alerts-topic', fromBeginning: true })
-
   await consumer.run({
     eachBatchAutoResolve: true,
     eachBatch: async ({ batch, resolveOffset, heartbeat, isRunning, isStale }: EachBatchPayload) => {
       const parsedData = []
+      console.log('did this start?')
+
       for (const message of batch.messages) {
         if (!isRunning() || isStale()) {
           break
@@ -33,7 +35,7 @@ async function alerts() {
         } catch(err) {
           console.info(err)
         }
-
+        console.log('more data coming through')
         if(pdata) parsedData.push(pdata)
 
         resolveOffset(message.offset)
