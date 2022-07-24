@@ -11,7 +11,7 @@ export function shouldSend(event:any) {
     return new Date(event.timestamp).getTime()
   })
   const latest = transformed.sort((a:any, b:any) => {
-    return b - a;
+    return a - b;
   })
   let prevDate = latest[0]
   return currentTime.getTime() > prevDate;
