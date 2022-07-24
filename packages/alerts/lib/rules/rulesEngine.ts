@@ -15,8 +15,9 @@ export default async function runRules(data: RawAlertRuleInputWithParsedSensorHa
 
   try {
     const ruleResults = await engine.run(facts)
+    console.log('events should be fired?', ruleResults.events)
     if (!ruleResults.events.length) return { events: [], facts }
-    console.log('events should be fired')
+    console.log('events fired')
     return { events: ruleResults.events, results: ruleResults.results, facts, device_buffer: data.sensor_readings, customer_device_id: data.customer_device_id }
   } catch (err) {
     console.log(err)
