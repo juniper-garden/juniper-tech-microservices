@@ -7,17 +7,12 @@ export default async function runRules(data: RawAlertRuleInputWithParsedSensorHa
    */
   if(!data.alert_configs || data.alert_configs.length === 0) return
   let engine = new Engine(data.alert_configs, { allowUndefinedFacts: true })
-  console.log('made it here after engine')
-
   // define fact(s) known at runtime
   const facts = buildFactFromReadings(data?.sensor_readings)
-  console.log('made it here', facts)
 
   try {
     const ruleResults = await engine.run(facts)
-    console.log('events should be fired?', ruleResults.events)
     if (!ruleResults.events.length) return { events: [], facts }
-    console.log('events fired')
     return { events: ruleResults.events, results: ruleResults.results, facts, device_buffer: data.sensor_readings, customer_device_id: data.customer_device_id }
   } catch (err) {
     console.log(err)

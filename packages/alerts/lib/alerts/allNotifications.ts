@@ -15,7 +15,6 @@ export default function allNotificationsHandler(job: JobInterface, done: done) {
   const { data }: any = job
   // console.log('made it here', data)
   data.forEach((alert: TypicalAlertEngineResult) => {
-    console.log('there was an alert inside allnotifications queue')
     const events = alert.events.map(item => item.params)
     if(!events.length) return
     events.forEach((event: any) => {

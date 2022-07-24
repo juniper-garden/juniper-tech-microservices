@@ -6,7 +6,6 @@ import { RawAlertRuleInputWithParsedSensorHash } from '../../lib/customTypes';
 import nodeCache from '../cache/nodeCache';
 
 export default async function email(job: RawAlertRuleInputWithParsedSensorHash[], done:  (params?:any) => void) {
-    console.log('email was triggered')
     const [data] = job
     // fetch sensor from node cache
     try {
@@ -34,6 +33,7 @@ export default async function email(job: RawAlertRuleInputWithParsedSensorHash[]
 }
 
 function sendNotification(data: any) {
+  console.log('sent an email')
   sgMail.setApiKey(process.env.SENDGRID_API_KEY || '')
   let date = moment().format('ll')
   const msg = {

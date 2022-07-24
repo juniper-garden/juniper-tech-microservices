@@ -35,7 +35,7 @@ function upsertNewReadings(raw_alert: RawAlertRuleInputWithParsedSensorHash, cac
     if(!cached_record.sensor_readings[inboundKey]) {
       cached_record.sensor_readings[inboundKey] = []
     }
-    if(cached_record.sensor_readings[inboundKey].length >= 10) {
+    if(cached_record.sensor_readings[inboundKey].length >= 50) {
       let new_readings = raw_alert.sensor_readings[inboundKey].slice(1)
       let old_readings = cached_record.sensor_readings[inboundKey].slice(0, -1) || []
       let combined_readings = old_readings.concat(new_readings)
@@ -66,7 +66,7 @@ export default async function rulesIngest(data:RawAlertRuleInput[]){
     if (process.env.USE_QUEUES) {
       queues.allNotificationsQ.push({data: allTriggeredAlerts})
     }
-    if(allTriggeredAlerts.length) console.log('allTriggeredAlerts',  allTriggeredAlerts)
+
     return allTriggeredAlerts
   } catch(err) {
     console.log('err', err)
