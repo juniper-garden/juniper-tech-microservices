@@ -21,8 +21,9 @@ export async function saveAndExitNoEvent(alert: RawAlertRuleInputWithParsedSenso
   try {
     let timestamp = Date.now()
     latest_event.timestamp = timestamp
-    alert.latest_events?.push(latest_event)
-
+    console.log('before', alert.latest_events?.length)
+    alert.latest_events?.push(latest_event?.length)
+    console.log('before', alert.latest_events)
     nodeCache.set(alert.customer_device_id, alert)
     return done(latest_event)
   } catch (e) {
