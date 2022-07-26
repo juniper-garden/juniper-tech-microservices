@@ -15,7 +15,7 @@ export default async function email(job: RawAlertRuleInputWithParsedSensorHash[]
     const alertCache:RawAlertRuleInputWithParsedSensorHash | undefined = nodeCache.get(data.customer_device_id);
     // instantiate an empty buffer for sensor name
   
-    if(!alertCache || !alertCache.latest_events) {
+    if(!alertCache || alertCache.latest_events?.length === 0) {
       const sent:any = await sendNotification(data)
       const latest_event = { event: 'email' }
       console.log('no alertcache?', alertCache, sent)
