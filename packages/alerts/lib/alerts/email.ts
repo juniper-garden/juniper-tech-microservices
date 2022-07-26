@@ -18,12 +18,13 @@ export default async function email(job: RawAlertRuleInputWithParsedSensorHash[]
     if(!alertCache || alertCache.latest_events?.length == 0) {
       const sent:any = await sendNotification(data)
       const latest_event = { event: 'email' }
-
+      console.log('no alertcache?', alertCache)
       if(sent) return saveAndExit(data, latest_event, done)
       return saveAndExitNoEvent(data, latest_event, done)
     }
 
     let sendIt = shouldSend(alertCache?.latest_events)
+    console.log('should send?', sendIt)
 
     if(!sendIt) return done()
 
