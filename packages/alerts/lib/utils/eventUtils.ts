@@ -13,7 +13,7 @@ export function shouldSend(event:any) {
   const latest = transformed.sort((a:any, b:any) => {
     return a - b;
   })
-  let prevDate = latest[0]
+  let prevDate = latest[0] || 0;
   return currentTime.getTime() > prevDate;
 }
 
