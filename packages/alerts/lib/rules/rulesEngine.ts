@@ -13,10 +13,10 @@ export default async function runRules(data: RawAlertRuleInputWithParsedSensorHa
   try {
     const ruleResults = await engine.run(facts)
     if (!ruleResults.events.length) return { events: [], facts }
-    return { events: ruleResults.events, results: ruleResults.results, facts, device_buffer: data.sensor_readings, customer_device_id: data.customer_device_id }
+    return { latest_event_timestamp: data.latest_event_timestamp, events: ruleResults.events, results: ruleResults.results, facts, device_buffer: data.sensor_readings, customer_device_id: data.customer_device_id}
   } catch (err) {
     console.log(err)
-    return { events: [], results: [], facts, device_buffer: data.sensor_readings, customer_device_id: data.customer_device_id }
+    return { latest_event_timestamp: data.latest_event_timestamp, events: [], results: [], facts, device_buffer: data.sensor_readings, customer_device_id: data.customer_device_id }
   }
 }
 

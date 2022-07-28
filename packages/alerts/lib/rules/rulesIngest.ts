@@ -14,8 +14,6 @@ export function sanitizeAlerts(dataWithParsedReadings:any[]): RawAlertRuleInputW
     if(cachedRecord) {
       let updatedRecord = upsertNewReadings(raw_alert, cachedRecord)
       // should send email every minute
-      if(updatedRecord.latest_event_timestamp < (Date.now() - (1 * 60 * 1000))) return acc
-      updatedRecord.latest_event_timestamp = Date.now()
       nodeCache.set(raw_alert.customer_device_id, updatedRecord)
       acc.push(updatedRecord)
       
@@ -70,6 +68,7 @@ export default async function rulesIngest(data:RawAlertRuleInput[]){
     let allTriggeredAlerts:any = results.filter((record: any) => record?.events.length)
     // common ingress for all event types into the queue
     if (process.env.USE_QUEUES && allTriggeredAlerts.length) {
+      console.log('trigger some alerts')
       queues.allNotificationsQ.push({data: allTriggeredAlerts})
     }
 
