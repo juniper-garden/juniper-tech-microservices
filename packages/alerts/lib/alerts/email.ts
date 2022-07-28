@@ -11,7 +11,6 @@ export default async function email(job: RawAlertRuleInputWithParsedSensorHash[]
     // fetch sensor from node cache
     try {
     const send = shouldSend(data)
-
     if(!send) return done('No new events')
     const sent:any = await sendNotification(data)
 

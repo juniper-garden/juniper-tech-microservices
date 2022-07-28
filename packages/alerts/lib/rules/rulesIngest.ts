@@ -14,8 +14,7 @@ export function sanitizeAlerts(dataWithParsedReadings:any[]): RawAlertRuleInputW
     if(cachedRecord) {
       let updatedRecord = upsertNewReadings(raw_alert, cachedRecord)
       // should send email every minute
-      if(updatedRecord.latest_event_timestamp > (Date.now() - (1 * 60 * 1000))) return acc
-      
+      if(updatedRecord.latest_event_timestamp < (Date.now() - (1 * 60 * 1000))) return acc
       updatedRecord.latest_event_timestamp = Date.now()
       nodeCache.set(raw_alert.customer_device_id, updatedRecord)
       acc.push(updatedRecord)
@@ -66,9 +65,7 @@ export default async function rulesIngest(data:RawAlertRuleInput[]){
     }
 
     // double check alert input is not duplicated and has a rule
-    
     let filterValidAlerts = sanitizeAlerts(data)
-
     let results:any = await Promise.all(filterValidAlerts.map(runRules))
     let allTriggeredAlerts:any = results.filter((record: any) => record?.events.length)
     // common ingress for all event types into the queue

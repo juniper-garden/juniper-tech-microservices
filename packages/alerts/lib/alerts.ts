@@ -16,7 +16,7 @@ process.once('SIGTERM', async function (code) {
 async function alerts() {
   const consumer = await JuniperConsumer(kafka, `alerts-topic-consumer-primary`, null)
 
-  await consumer.subscribe({ topic: 'alerts-topic', fromBeginning: false })
+  await consumer.subscribe({ topic: 'alerts-topic', fromBeginning: true })
   await consumer.run({
     eachBatchAutoResolve: true,
     eachBatch: async ({ batch, resolveOffset, heartbeat, isRunning, isStale }: EachBatchPayload) => {
@@ -38,9 +38,8 @@ async function alerts() {
         resolveOffset(message.offset)
       }
       try {
-        await rulesIngest(parsedData)
         // the finish event is emitted when all data has been flushed from the stream
-        
+        await rulesIngest(parsedData)
       } catch(err) {
         console.info('error in rules ingest', err)
       }
