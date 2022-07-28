@@ -14,7 +14,7 @@ process.once('SIGTERM', async function (code) {
 });
 
 async function alerts() {
-  const consumer = await JuniperConsumer(kafka, `alerts-topic-consumer-5`, null)
+  const consumer = await JuniperConsumer(kafka, `alerts-topic-consumer-primary`, null)
 
   await consumer.subscribe({ topic: 'alerts-topic', fromBeginning: false })
   await consumer.run({
