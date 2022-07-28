@@ -1,6 +1,6 @@
 import rulesIngest, { sanitizeAlerts } from '../../lib/rules/rulesIngest'
 import nodeCache from '../../lib/cache/nodeCache';
-import { testData } from '../mocks/customer'
+import { testData } from '../mocks/testDeviceData'
 
 // const sendAlertRule:any = {
 //   conditions: {

@@ -1,21 +1,27 @@
-import JuniperCore from '@juniper-tech/core'
-import desktopPushNotifiation from '../../lib/alerts/desktopPushNotification'
 import { RawAlertRuleInputWithParsedSensorHash } from '../../lib/customTypes';
 import nodeCache from '../../lib/cache/nodeCache';
-const { JuniperRedisUtils } = JuniperCore
-const { SensorBuffer, JuniperRedisBuffer } = JuniperRedisUtils
-
+import email from '../../lib/alerts/email';
+import { sendNotification } from '../../lib/utils/emailUtils';
 const expectedOutput = {
 	customer_device_id: "81eaec8b-cc5a-4fe1-811c-d996d4bfe0ad",
 	name: "",
 	sensor_readings: "{\"temperature\":[{\"value\":\"21.76\",\"unit\":\"C\",\"timestamp\":1650502574,\"name\":\"temperature\"}],\"humidity\":[{\"value\":\"21.76\",\"unit\":\"C\",\"timestamp\":1650502574,\"name\":\"humidity\"}],\"pressure\":[{\"value\":\"21.76\",\"unit\":\"C\",\"timestamp\":1650502574,\"name\":\"pressure\"}]}",
 }
 
-describe("Test the desktop push notification job", () => {
+jest.mock('../../lib/utils/emailUtils', () => {
+  return {
+    sendNotification: jest.fn(() => {
+      return true
+    }),
+  }
+})
+
+describe("Test the email push notification job", () => {
   beforeEach(() => {
     nodeCache.flushAll()
   })
-  xit('should send a notification', async () => {
+  
+  it('should send an email notification', async () => {
     let alert: RawAlertRuleInputWithParsedSensorHash  = {
       customer_device_id: expectedOutput.customer_device_id,
       sensor_readings: JSON.parse(expectedOutput.sensor_readings),
@@ -31,26 +37,26 @@ describe("Test the desktop push notification job", () => {
     ]
     const done = jest.fn()
 
-    await desktopPushNotifiation(job, done);
+    await email(job, done);
     expect(done).toBeCalledTimes(1);
 
     let updated: RawAlertRuleInputWithParsedSensorHash | undefined = nodeCache.get(alert.customer_device_id)
     let latestEvents = updated?.latest_events
     let latestEvent = latestEvents && latestEvents[0]
-    expect(latestEvent.event).toBe('desktopPushNotification')
+    expect(latestEvent.type).toBe('email')
   })
 
-  xit('should not send multiple requests back to back', async () => {
+  it('should not send multiple requests back to back', async () => {
     let alert: RawAlertRuleInputWithParsedSensorHash  = {
       customer_device_id: expectedOutput.customer_device_id,
       sensor_readings: JSON.parse(expectedOutput.sensor_readings),
       latest_events: [
         {
-          type: 'desktopPushNotification',
+          type: 'email',
           timestamp: Date.now()
         }
       ],
-      latest_event_timestamp: undefined,
+      latest_event_timestamp: Date.now(),
       alert_configs: []
     }
 
@@ -61,29 +67,30 @@ describe("Test the desktop push notification job", () => {
     ]
     const done = jest.fn()
 
-    await desktopPushNotifiation(job, done);
-    expect(done).toBeCalledTimes(1);
+    await email(job, done);
+    expect(sendNotification).toBeCalledTimes(1);
 
     let updated: RawAlertRuleInputWithParsedSensorHash | undefined = nodeCache.get(alert.customer_device_id)
 
     let latestEvents = updated?.latest_events
     let latestEvent = latestEvents && latestEvents[0]
-    expect(latestEvent).toBe('desktopPushNotification')
+    expect(latestEvent.type).toBe('email')
 
-    await desktopPushNotifiation(job, done);
-    expect(done).toBeCalledTimes(1);
+    await email(job, done);
+    // should be same as above, it should not increment
+    expect(sendNotification).toBeCalledTimes(1);
   })
 
-  xit('should send multiple request after 1 minute', async () => {
+  it('should send multiple request after 1 minute', async () => {
     const currentTime = new Date();
-    currentTime.setMinutes(currentTime.getMinutes() - 5);
+    currentTime.setMinutes(currentTime.getMinutes());
     
     let alert: RawAlertRuleInputWithParsedSensorHash  = {
       customer_device_id: expectedOutput.customer_device_id,
       sensor_readings: JSON.parse(expectedOutput.sensor_readings),
       latest_events: [
         {
-          type: 'desktopPushNotification',
+          type: 'email',
           timestamp: currentTime.getTime()
         }
       ],
@@ -98,7 +105,7 @@ describe("Test the desktop push notification job", () => {
     ]
     const done = jest.fn()
 
-    await desktopPushNotifiation(job, done);
+    await email(job, done);
     expect(done).toHaveBeenCalled();
 
     let updated: RawAlertRuleInputWithParsedSensorHash | null = nodeCache.get(alert.customer_device_id) || null
@@ -111,7 +118,7 @@ describe("Test the desktop push notification job", () => {
     if(updated.latest_events) updated.latest_events[0] = latestEvent
     nodeCache.set(updated.customer_device_id, updated)
 
-    await desktopPushNotifiation(job, done);
+    await email(job, done);
     expect(done).toBeCalledTimes(2);
   })
 })
