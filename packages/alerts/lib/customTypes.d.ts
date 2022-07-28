@@ -15,7 +15,7 @@ export type RawAlertRuleInput = {
   sensor_readings: any;
   alert_configs: any[];
   latest_events: any[] | null;
-  last_event_timestamp: any;
+  latest_event_timestamp: any | null;
 }
 
 export type RawAlertRuleInputWithParsedSensorHash = {
@@ -25,7 +25,7 @@ export type RawAlertRuleInputWithParsedSensorHash = {
   };
   latest_events: any[] | null;
   alert_configs: any[];
-  last_event_timestamp: any;
+  latest_event_timestamp: any | null;
 }
 
 export interface JobInterface {

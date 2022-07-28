@@ -14,16 +14,16 @@ export function sanitizeAlerts(dataWithParsedReadings:any[]): RawAlertRuleInputW
     if(cachedRecord) {
       let updatedRecord = upsertNewReadings(raw_alert, cachedRecord)
       // should send email every minute
-      if(updatedRecord.last_event_timestamp > (Date.now() - (1 * 60 * 1000))) return acc
+      if(updatedRecord.latest_event_timestamp > (Date.now() - (1 * 60 * 1000))) return acc
       
-      updatedRecord.last_event_timestamp = Date.now()
+      updatedRecord.latest_event_timestamp = Date.now()
       nodeCache.set(raw_alert.customer_device_id, updatedRecord)
       acc.push(updatedRecord)
       
       return acc
     }
 
-    raw_alert.last_event_timestamp = Date.now()
+    raw_alert.latest_event_timestamp = Date.now()
     raw_alert.latest_events = []
     nodeCache.set(raw_alert.customer_device_id, raw_alert)
     acc.push(raw_alert)
@@ -50,7 +50,9 @@ function upsertNewReadings(raw_alert: RawAlertRuleInputWithParsedSensorHash, cac
       cached_record.sensor_readings[inboundKey] = combined_readings
       return
     }
-    cached_record.sensor_readings[inboundKey].concat(raw_alert.sensor_readings[inboundKey])
+    raw_alert.sensor_readings[inboundKey].forEach((readings: any) => {
+      cached_record.sensor_readings[inboundKey].push(readings)
+    })
   })
   return cached_record
 }

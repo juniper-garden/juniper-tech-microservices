@@ -20,7 +20,7 @@ describe("Test the desktop push notification job", () => {
       customer_device_id: expectedOutput.customer_device_id,
       sensor_readings: JSON.parse(expectedOutput.sensor_readings),
       latest_events: [],
-      last_event_timestamp: undefined,
+      latest_event_timestamp: undefined,
       alert_configs: []
     }
 
@@ -50,7 +50,7 @@ describe("Test the desktop push notification job", () => {
           timestamp: Date.now()
         }
       ],
-      last_event_timestamp: undefined,
+      latest_event_timestamp: undefined,
       alert_configs: []
     }
 
@@ -87,7 +87,7 @@ describe("Test the desktop push notification job", () => {
           timestamp: currentTime.getTime()
         }
       ],
-      last_event_timestamp: undefined,
+      latest_event_timestamp: undefined,
       alert_configs: []
     }
 
@@ -107,7 +107,7 @@ describe("Test the desktop push notification job", () => {
     let latestEvent = latestEvents?.[0]
     const date = new Date()
     date.setMinutes(date.getMinutes() - 10);
-    latestEvent.last_event_timestamp = date;
+    latestEvent.latest_event_timestamp = date;
     if(updated.latest_events) updated.latest_events[0] = latestEvent
     nodeCache.set(updated.customer_device_id, updated)
 
