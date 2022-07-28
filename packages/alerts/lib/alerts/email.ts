@@ -1,6 +1,6 @@
 import _ from "lodash";
 import moment from 'moment'
-import { shouldSend, saveAndExit, saveAndExitNoEvent } from '../utils/eventUtils';
+import { saveAndExit, saveAndExitNoEvent } from '../utils/eventUtils';
 import sgMail from '@sendgrid/mail';
 import { RawAlertRuleInputWithParsedSensorHash } from '../../lib/customTypes';
 import nodeCache from '../cache/nodeCache';
@@ -14,17 +14,12 @@ export default async function email(job: RawAlertRuleInputWithParsedSensorHash[]
     try {
     const alertCache:RawAlertRuleInputWithParsedSensorHash | undefined = nodeCache.get(data.customer_device_id);
     // instantiate an empty buffer for sensor name
-  
     if(!alertCache) {
       const sent:any = await sendNotification(data)
       const latest_event = { event: 'email' }
       if(sent && alertCache) return saveAndExit(alertCache, latest_event, done)
       return saveAndExitNoEvent(data, latest_event, done)
     }
-
-    let sendIt = shouldSend(alertCache?.latest_events)
-
-    if(!sendIt) return done()
 
     const sent:any = await sendNotification(data)
 

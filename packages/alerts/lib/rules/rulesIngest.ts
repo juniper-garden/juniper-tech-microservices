@@ -13,10 +13,13 @@ export function sanitizeAlerts(dataWithParsedReadings:any[]): RawAlertRuleInputW
 
     if(cachedRecord) {
       let updatedRecord = upsertNewReadings(raw_alert, cachedRecord)
-      if(updatedRecord.last_event_timestamp > (Date.now() - (5 * 60 * 1000))) return acc
+      // should send email every minute
+      if(updatedRecord.last_event_timestamp > (Date.now() - (1 * 60 * 1000))) return acc
+      
       updatedRecord.last_event_timestamp = Date.now()
       nodeCache.set(raw_alert.customer_device_id, updatedRecord)
       acc.push(updatedRecord)
+      
       return acc
     }
 
@@ -37,7 +40,9 @@ function upsertNewReadings(raw_alert: RawAlertRuleInputWithParsedSensorHash, cac
     if(!cached_record.sensor_readings[inboundKey]) {
       cached_record.sensor_readings[inboundKey] = []
     }
-    
+
+    // establish a buffer of 50 readings for each sensor type, keep latest
+    // and then we run rule against avg of those 50 to normalize anomolies
     if(cached_record.sensor_readings[inboundKey].length >= 50) {
       let new_readings = raw_alert.sensor_readings[inboundKey].slice(1)
       let old_readings = cached_record.sensor_readings[inboundKey].slice(0, -1) || []
@@ -62,11 +67,10 @@ export default async function rulesIngest(data:RawAlertRuleInput[]){
     
     let filterValidAlerts = sanitizeAlerts(data)
 
-    let results = await Promise.all(filterValidAlerts.map(runRules))
-
-    let allTriggeredAlerts:any = results.filter(record => record?.events.length)
-    // // common ingress for all event types into the queue
-    if (process.env.USE_QUEUES) {
+    let results:any = await Promise.all(filterValidAlerts.map(runRules))
+    let allTriggeredAlerts:any = results.filter((record: any) => record?.events.length)
+    // common ingress for all event types into the queue
+    if (process.env.USE_QUEUES && allTriggeredAlerts.length) {
       queues.allNotificationsQ.push({data: allTriggeredAlerts})
     }
 

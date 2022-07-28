@@ -15,7 +15,6 @@ process.once('SIGTERM', async function (code) {
 
 
 async function alerts() {
-  const rando = Math.floor((Math.random()+1) * 100);
   const consumer = await JuniperConsumer(kafka, `alerts-topic-consumer-primary`, null)
 
   await consumer.subscribe({ topic: 'alerts-topic', fromBeginning: false })
