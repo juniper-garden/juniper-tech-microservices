@@ -8,12 +8,13 @@ dotenv.config()
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY || '')
 
+const outoundEmailAddress = process.env.SENDGRID_EMAIL || 'info@example.com'
 
 export async function sendNotification(data: any) {
   let date = moment().format('ll')
   const msg = {
     to: data.events[0].params[0].data.email,
-    from: 'dashcraft@junipergarden.co',
+    from: outoundEmailAddress,
     subject: `🚨 Alert Was Triggered on ${date}`,
     html: `<section>
       <h1>
