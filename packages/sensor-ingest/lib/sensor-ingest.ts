@@ -27,7 +27,7 @@ async function sensorIngest() {
         if (!isRunning() || isStale()) {
           break
         }
-
+        console.log('more data inbound')
         parsedData.push(JSON.parse(message?.value?.toString() || ''))
         resolveOffset(message.offset)
       }

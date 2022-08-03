@@ -36,6 +36,7 @@ app.post('/sensor-ingest', async (req: Request, res: Response) => {
     const { body } = req
     const producer: any = req.app.get('kafka_producer')
     try {
+        console.log('sensor ingest, ingesting data')
         await producer.send({
             topic: 'sensor-ingest',
             messages: [
@@ -48,6 +49,7 @@ app.post('/sensor-ingest', async (req: Request, res: Response) => {
             timestamp: body.timestamp
         })
     } catch (error) {
+        console.log('there was an error')
         res.status(500).json({})
     }
     return null
