@@ -2,7 +2,7 @@ import allQueues from '../jobs'
 
 import { JobInterface, TypicalAlertEngineResult } from "../../lib/customTypes";
 import type { queue, done } from "fastq";
-
+import fetch from 'isomorphic-fetch'
 
 export default function allNotificationsHandler(job: JobInterface, done: done) {
   const queryTypeHash: { [key:string]: queue } = {
