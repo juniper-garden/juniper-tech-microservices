@@ -2,7 +2,6 @@ import allQueues from '../jobs'
 
 import { JobInterface, TypicalAlertEngineResult } from "../../lib/customTypes";
 import type { queue, done } from "fastq";
-import fetch from 'isomorphic-fetch'
 
 export default function allNotificationsHandler(job: JobInterface, done: done) {
   const queryTypeHash: { [key:string]: queue } = {
@@ -24,20 +23,6 @@ export default function allNotificationsHandler(job: JobInterface, done: done) {
         if(!queueForEvent) return done(new Error(`queue does not exist for event type ${payload.type}`))
         try {
           queueForEvent.push(data)
-          const bodyToPush = JSON.stringify({
-            customer_device_id: data[0].customer_device_id,
-            message: `There was an alert triggered!`,
-            raw_event: JSON.stringify(data[0]),
-            timestamp: data[0].latest_event_timestamp
-          })
-
-          await fetch(process.env.ALERT_NOTIFICATION_WEBHOOK || '', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: bodyToPush
-          })
         } catch(err) {
           console.info(err)
         }
