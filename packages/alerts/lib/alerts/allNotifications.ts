@@ -31,7 +31,7 @@ export default function allNotificationsHandler(job: JobInterface, done: done) {
             timestamp: data[0].latest_event_timestamp
           })
 
-          await fetch('http://localhost:4000/alert_webhook', {
+          await fetch(process.env.ALERT_NOTIFICATION_WEBOOK || '', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
