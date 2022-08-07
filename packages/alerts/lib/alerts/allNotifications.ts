@@ -31,8 +31,11 @@ export default function allNotificationsHandler(job: JobInterface, done: done) {
             timestamp: data[0].latest_event_timestamp
           })
 
-          await fetch('https://api.junipertechnology.co/alert_webhook', {
+          await fetch('http://localhost:4000/alert_webhook', {
             method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
             body: bodyToPush
           })
         } catch(err) {
