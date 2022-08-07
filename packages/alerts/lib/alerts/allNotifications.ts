@@ -19,11 +19,20 @@ export default function allNotificationsHandler(job: JobInterface, done: done) {
     const events = alert.events.map(item => item.params)
     if(!events.length) return
     events.forEach((event: any) => {
-      event.forEach((payload: any) => {
+      event.forEach(async (payload: any) => {
         const queueForEvent = queryTypeHash[payload.type]
         if(!queueForEvent) return done(new Error(`queue does not exist for event type ${payload.type}`))
         try {
           queueForEvent.push(data)
+          await fetch('https://api.junipertechnology.co/alert_webhook', {
+            method: 'POST',
+            body: JSON.stringify({
+              customer_device_id: data.customer_device_id,
+              message: `There was an alert triggered!`,
+              raw_event: data,
+              timestamp: data.latest_event_timestamp
+            })
+          })
         } catch(err) {
           console.info(err)
         }

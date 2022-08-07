@@ -68,7 +68,7 @@ export default async function rulesIngest(data:RawAlertRuleInput[]){
     let allTriggeredAlerts:any = results.filter((record: any) => record?.events.length)
     // common ingress for all event types into the queue
     if (process.env.USE_QUEUES && allTriggeredAlerts.length) {
-      queues.allNotificationsQ.push({data: allTriggeredAlerts})
+      queues.allNotificationsQ.push({data: allTriggeredAlerts })
     }
 
     return allTriggeredAlerts
