@@ -25,12 +25,11 @@ export default function allNotificationsHandler(job: JobInterface, done: done) {
         try {
           queueForEvent.push(data)
           const bodyToPush = JSON.stringify({
-            customer_device_id: data.customer_device_id,
+            customer_device_id: data[0].customer_device_id,
             message: `There was an alert triggered!`,
-            raw_event: JSON.stringify(data),
-            timestamp: data.latest_event_timestamp
+            raw_event: JSON.stringify(data[0]),
+            timestamp: data[0].latest_event_timestamp
           })
-          console.log('data', bodyToPush)
 
           await fetch('https://api.junipertechnology.co/alert_webhook', {
             method: 'POST',
