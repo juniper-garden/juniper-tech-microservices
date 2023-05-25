@@ -26,6 +26,7 @@ export function processKafkaQueueController(data: any): { readingsMapped: Readin
   const finalBatchResults: SensorReading[] = []
 
   for (const key in readingsMapped) {
+    if(key == '' || !key || key === 'undefined') continue
     readingsMapped[key] = createHashOfReadingsBySensorName(readingsMapped[key])
 
     for (const sensorName in readingsMapped[key]) {
