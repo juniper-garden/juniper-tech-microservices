@@ -12,7 +12,7 @@ export const kinesisRecordTransformer = _.compose(JSON.parse, toBase64)
 // tslint:disable-next-line: function-name
 export function MapSensorPayloadToReadings(payload: IKinesisSensorPayload): IReading[] {
   const readings: any = payload.readings
-  return readings.map((x: SensorReading) => {
+  return readings?.map((x: SensorReading) => {
     return {
       customer_device_id: payload.id,
       name: x.name,

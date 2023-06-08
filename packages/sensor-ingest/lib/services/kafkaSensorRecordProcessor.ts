@@ -21,6 +21,7 @@ export type ReadingsByCustomerId = {
 // TODO: Refactor
 export function processKafkaQueueController(data: any): { readingsMapped: ReadingsByCustomerId, finalBatchResults: SensorReading[] } {
   const processed: any = data.map(kinesisTransformer).flat()
+  if(processed.length === 0) return { readingsMapped: {}, finalBatchResults: [] }
   const readingsMapped: ReadingsByCustomerId = createHashOfDevicesByCustomerDeviceId(processed)
 
   const finalBatchResults: SensorReading[] = []
